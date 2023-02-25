@@ -109,7 +109,7 @@ export function compareOptions(a: any, b: any, prefix = ''): Differences {
     );
 
     // Compare required
-    if ((a.required ?? false) !== b.required)
+    if ((a.required ?? false) !== (b.required ?? false))
         differences.push([`${prefix}required`, a.required, b.required]);
 
     // Compare min and max values

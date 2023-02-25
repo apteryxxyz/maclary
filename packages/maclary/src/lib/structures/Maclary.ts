@@ -197,8 +197,8 @@ export namespace Maclary {
             disableMentionPrefix: s.boolean.default(false),
 
             actionIdSeparator: s.string.default(','),
-            categoryDirectoryPrefix: s.string.default('@'),
-            groupDirectoryPrefix: s.string.default('!'),
+            commandCategoryDirectoryPrefix: s.string.default('@'),
+            commandGroupDirectoryPrefix: s.string.default('!'),
 
             actionPreconditionFailMessages: s
                 .object(

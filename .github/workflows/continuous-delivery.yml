@@ -1,0 +1,79 @@
+name: Continuous Delivery
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: The number of the PR that is being deployed.
+        required: true
+      branch:
+        description: The branch that is being deployed.
+        required: false
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/**'
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          repository: ${{ github.event.inputs.repository }}
+          ref: ${{ github.event.inputs.branch || 'main' }}
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Compile code
+        run: pnpm build
+
+      - name: Determine tag
+        id: determine-tag
+        run: |
+          # Dispatch a pull request
+          if [[ ${{ github.event.inputs.pull_request != '' }} ]]
+          then
+            NUMBER=${{ github.event.inputs.pull_request }}
+            echo "tag=${NUMBER}" >> $GITHUB_OUTPUT
+
+          # Push or regular dispatch
+          else
+            echo "tag=next" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to NPM
+        if: steps.determine-tag.outputs.tag != ''
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+
+          TAG=${{ env.tag }}
+          VERSION="${TAG}.$(git rev-parse --verify --short HEAD)"
+
+          for PACKAGE in packages/*
+          do
+            pushd $PACKAGE
+
+            pnpm release --preid ${VERSION}
+            pnpm publish --tag ${TAG} --no-git-checks
+
+            popd
+          done
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

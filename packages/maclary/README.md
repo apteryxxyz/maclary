@@ -1,6 +1,5 @@
 <div align="center">
-    <img alt="hairy maclary" src="https://raw.githubusercontent.com/apteryxxyz/maclary/main/.github/assets/maclary.png" width="30%"/>
-    <h1>Maclary</h1><br/>
+    <h1><b>Maclary</b></h1><br/>
     <h3>A framework intended for making the process of creating complex Discord bots easier</h3><br/>
     <code>npm install maclary discord.js@dev</code><br/>
     <code>yarn add maclary discord.js@dev</code/><br/>

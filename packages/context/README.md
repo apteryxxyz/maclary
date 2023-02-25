@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="hairy maclary" src="https://raw.githubusercontent.com/apteryxxyz/maclary/main/.github/assets/maclary.png" width="30%"/>
+    <h1><b>Maclary</b></h1><br/>
     <h1>Maclary Context</h1><br/>
     <h3>Convert Discord messages and chat input into a single common object</h3><br/>
     <code>

@@ -280,11 +280,14 @@ export class CommandManager extends SetManager<Command<any, any>> {
         commands: Command<any, any>[],
         kinds: Command.Kind[]
     ): Command<any, any>[] {
-        return commands.filter(cmd =>
-            (cmd.options ?? []).some(cmd2 => cmd2.type === 1)
-                ? this._filterByKind(cmd.options as any, kinds)
-                : cmd.kinds.some((kind: Command.Kind) => kinds.includes(kind))
-        );
+        return commands.filter(command => {
+            if (command._variety === Command.Variety.Group) {
+                const options = command.options as Command<any, any>[];
+                return this._filterByKind(options, kinds).length > 0;
+            } else if (command._variety === Command.Variety.Command) {
+                return command.kinds.some((kind: Command.Kind) => kinds.includes(kind));
+            } else return true;
+        });
     }
 
     private _isCommand(value: unknown): value is Command<any, any> {

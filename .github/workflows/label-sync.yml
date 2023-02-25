@@ -1,4 +1,4 @@
-name: Label sync
+name: Label Sync
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   label-sync:
-    name: Label sync
+    name: Label Sync
     runs-on: ubuntu-latest
     if: github.repository_owner == 'maclary'
     steps:
@@ -17,6 +17,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Label sync
-        uses: crazy-max/ghaction-github-labeler
+        uses: crazy-max/ghaction-github-labeler@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

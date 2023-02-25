@@ -48,7 +48,7 @@ jobs:
         id: determine_tag
         run: |
           # Dispatch a pull request
-          if [[ ${{ github.event.inputs.pull_request != '' }} ]]
+          if [[ ${{ github.event.inputs.pull_request != '' }} == true ]]
           then
             NUMBER=${{ github.event.inputs.pull_request }}
             echo "TAG=pr-${NUMBER}" >> $GITHUB_OUTPUT

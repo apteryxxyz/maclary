@@ -68,12 +68,15 @@ jobs:
 
           for PACKAGE in packages/*
           do
-            pushd $PACKAGE
+            if [[ $(git diff HEAD~1 --name-only $PACKAGE/) ]]
+            then
+              pushd $PACKAGE
 
-            pnpm release --preid ${VERSION}
-            pnpm publish --tag ${TAG} --no-git-checks
+              pnpm release --preid ${VERSION}
+              pnpm publish --tag ${TAG} --no-git-checks
 
-            popd
+              popd
+            fi
           done
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

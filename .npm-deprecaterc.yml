@@ -2,3 +2,4 @@ name: '*next*'
 package:
   - 'maclary'
   - '@maclary/context'
+message: This version has been automatically deprecated. Please use a newer version.

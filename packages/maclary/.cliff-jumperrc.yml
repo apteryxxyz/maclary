@@ -1,0 +1,4 @@
+name: maclary
+packagePath: packages/maclary
+tagTemplate: 'maclary@{{new-version}}'
+monoRepo: true

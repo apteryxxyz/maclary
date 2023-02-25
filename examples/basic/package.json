@@ -1,0 +1,9 @@
+{
+    "name": "basic",
+    "main": "dist/index.js",
+    "dependencies": {
+        "discord.js": "^14.7.1",
+        "dotenv": "^16.0.3",
+        "maclary": "workspace:^1.0.0"
+    }
+}

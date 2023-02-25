@@ -1,0 +1,45 @@
+{
+    "name": "maclary",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*",
+        "plugins/*"
+    ],
+    "scripts": {
+        "lint": "lerna run lint",
+        "format": "lerna run format",
+        "docs": "lerna run docs",
+        "build": "lerna run build",
+        "graph": "nx dep-graph",
+        "prepare": "husky install"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^17.4.4",
+        "@commitlint/config-conventional": "^17.4.4",
+        "@favware/cliff-jumper": "^1.10.0",
+        "@favware/npm-deprecate": "^1.0.7",
+        "@rushstack/eslint-patch": "^1.2.0",
+        "@types/node": "^18.14.0",
+        "@typescript-eslint/eslint-plugin": "^5.52.0",
+        "@typescript-eslint/parser": "^5.52.0",
+        "eslint": "^8.34.0",
+        "eslint-config-apteryx": "^2.0.4",
+        "eslint-config-prettier": "^8.6.0",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-jsdoc": "^39.9.1",
+        "eslint-plugin-n": "^15.6.1",
+        "eslint-plugin-prettier": "^4.2.1",
+        "eslint-plugin-promise": "^6.1.1",
+        "eslint-plugin-sonarjs": "^0.17.0",
+        "eslint-plugin-unicorn": "^45.0.2",
+        "husky": "^8.0.3",
+        "lerna": "^6.5.1",
+        "nx": "^15.7.2",
+        "prettier": "^2.8.4",
+        "prettier-config-apteryx": "^2.0.3",
+        "ts-config-apteryx": "^2.0.0",
+        "typedoc": "^0.23.25",
+        "typescript": "^4.9.5"
+    }
+}

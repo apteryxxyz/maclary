@@ -1,0 +1,5 @@
+org: maclary
+name: context
+packagePath: packages/context
+tagTemplate: '@maclary/context@{{new-version}}'
+monoRepo: true

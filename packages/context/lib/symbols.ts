@@ -1,4 +1,4 @@
-export const _deferred = Symbol.for('MaclaryContextDeferred');
-export const _replied = Symbol.for('MaclaryContextReplied');
-export const _replies = Symbol.for('MaclaryContextReplies');
-export const _reply = Symbol.for('MaclaryContextReply');
+export const _firstReply = Symbol.for('MaclaryContextFirstReply');
+export const _hasDeferred = Symbol.for('MaclaryContextHasDeferred');
+export const _hasReplied = Symbol.for('MaclaryContextHasReplied');
+export const _sendReply = Symbol.for('MaclaryContextSendReply');

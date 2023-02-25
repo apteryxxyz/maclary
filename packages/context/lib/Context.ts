@@ -5,6 +5,7 @@ import type {
     Locale,
     PermissionsBitField,
     Snowflake,
+    TextChannel,
 } from 'discord.js';
 import {
     Base,
@@ -15,9 +16,8 @@ import {
     DiscordjsErrorCodes,
     GuildMember,
     Message,
-    TextChannel,
 } from 'discord.js';
-import { _deferred, _replied, _replies, _reply } from './symbols';
+import { _firstReply, _hasDeferred, _hasReplied, _sendReply } from './symbols';
 
 const ChatInput = ChatInputCommandInteraction;
 
@@ -30,6 +30,8 @@ interface Types {
 
 type If<T, C, M> = T extends ChatInputCommandInteraction ? C : M;
 
+type Null = () => Promise<null>;
+
 /**
  * A context class for a message or chat input interaction.
  * @template P The parent type, either a {@link ChatInputCommandInteraction} or a {@link Message}.
@@ -39,9 +41,9 @@ export class Context<
 > extends Base {
     public parent: P;
 
-    private [_deferred] = false;
-    private [_replied] = false;
-    private [_replies] = new Collection<Snowflake, Message>();
+    private [_hasDeferred] = false;
+    private [_hasReplied] = false;
+    private [_firstReply]: Message | null = null;
 
     public constructor(parent: P) {
         if (parent instanceof ChatInput === parent instanceof Message)
@@ -113,7 +115,7 @@ export class Context<
      * Whether the reply to this has been deferred.
      */
     public get deferred(): boolean {
-        return this[_deferred];
+        return this[_hasDeferred];
     }
 
     /**
@@ -200,7 +202,7 @@ export class Context<
      * Whether this has already been replied to.
      */
     public get replied(): boolean {
-        return this[_replied];
+        return this[_hasReplied];
     }
 
     /**
@@ -232,11 +234,15 @@ export class Context<
         if (this.deferred || this.replied)
             throw new DiscordjsError(DiscordjsErrorCodes.InteractionAlreadyReplied);
 
-        this[_deferred] = true;
-        // @ts-expect-error 2322
-        if (this.parent instanceof ChatInput) return this.parent.deferReply(...args);
-        // @ts-expect-error 2556
-        else return this.channel.sendTyping(...args);
+        this[_hasDeferred] = true;
+
+        if (this.parent instanceof ChatInput) {
+            // @ts-expect-error 2322
+            return this.parent.deferReply(...args);
+        } else {
+            // @ts-expect-error 2322
+            return this.parent.channel.sendTyping();
+        }
     }
 
     /**
@@ -245,18 +251,22 @@ export class Context<
      */
     public deleteReply(
         ...args: Parameters<If<P, Types['Input']['deleteReply'], Types['Message']['delete']>>
-    ): ReturnType<If<P, Types['Input']['deleteReply'], Types['Message']['delete']>> {
+    ): ReturnType<If<P, Types['Input']['deleteReply'], Types['Message']['delete'] | Null>> {
         if (!this.deferred && !this.replied)
             throw new DiscordjsError(DiscordjsErrorCodes.InteractionNotReplied);
 
-        if (this.parent instanceof Message) {
-            const reply = this[_replies].first();
-            // @ts-expect-error 2556
-            return reply?.delete(...args);
+        if (this.parent instanceof ChatInput) {
+            // @ts-expect-error 2322
+            return this.parent.deleteReply(...args);
+        }
+
+        if (this.replied && this[_firstReply]) {
+            // @ts-expect-error 2322
+            return this[_firstReply].delete(...args);
         }
 
         // @ts-expect-error 2322
-        return this.parent.deleteReply(...args);
+        return null;
     }
 
     /**
@@ -265,23 +275,27 @@ export class Context<
      */
     public editReply(
         ...args: Parameters<If<P, Types['Input']['editReply'], Types['Message']['edit']>>
-    ): ReturnType<If<P, Types['Input']['editReply'], Types['Message']['edit']>> {
+    ): ReturnType<If<P, Types['Input']['editReply'], Types['Message']['edit'] | Null>> {
         if (!this.deferred && !this.replied)
             throw new DiscordjsError(DiscordjsErrorCodes.InteractionNotReplied);
 
         if (this.parent instanceof ChatInput) {
-            // @ts-expect-error 2556
+            // @ts-expect-error 2322
             return this.parent.editReply(...args);
         }
 
-        if (this.replied) {
-            const reply = this[_replies].first();
-            // @ts-expect-error 2556
-            return reply?.edit(...args);
-        } else {
-            // @ts-expect-error 2556
-            return this[_reply](...args);
+        if (this.replied && this[_firstReply]) {
+            // @ts-expect-error 2322
+            return this[_firstReply].edit(...args);
         }
+
+        if (this.deferred && !this.replied) {
+            // @ts-expect-error 2322
+            return this[_sendReply](...args);
+        }
+
+        // @ts-expect-error 2322
+        return null;
     }
 
     /**
@@ -290,26 +304,22 @@ export class Context<
      */
     public fetchReply(
         ...args: Parameters<If<P, Types['Input']['fetchReply'], Types['Message']['fetch']>>
-    ): ReturnType<If<P, Types['Input']['fetchReply'], Types['Message']['fetch']>> {
+    ): ReturnType<If<P, Types['Input']['fetchReply'], Types['Message']['fetch'] | Null>> {
         if (!this.deferred && !this.replied)
             throw new DiscordjsError(DiscordjsErrorCodes.InteractionNotReplied);
 
         if (this.parent instanceof ChatInput) {
-            // @ts-expect-error 2556
+            // @ts-expect-error 2322
             return this.parent.fetchReply(...args);
         }
 
-        if (this.replied) {
-            const replyId = this[_replies].firstKey();
+        if (this.replied && this[_firstReply]) {
             // @ts-expect-error 2322
-            return this.client.channels.fetch(this.channelId ?? '').then(chl => {
-                if (!(chl instanceof TextChannel)) return null;
-                return chl.messages.fetch(replyId ?? '');
-            });
-        } else {
-            // @ts-expect-error 2556
-            return this[_reply](...args);
+            return this[_firstReply].fetch(...args);
         }
+
+        // @ts-expect-error 2322
+        return null;
     }
 
     /**
@@ -319,13 +329,13 @@ export class Context<
     public followUp(
         ...args: Parameters<If<P, Types['Input']['followUp'], Types['Message']['reply']>>
     ): ReturnType<If<P, Types['Input']['followUp'], Types['Message']['reply']>> {
-        if (this.deferred || this.replied)
-            throw new DiscordjsError(DiscordjsErrorCodes.InteractionAlreadyReplied);
-
-        // @ts-expect-error 2322
-        if (this.parent instanceof ChatInput) return this.parent.followUp(...args);
-        // @ts-expect-error 2556
-        else return this.channel.send(...args);
+        if (this.parent instanceof ChatInput) {
+            // @ts-expect-error 2322
+            return this.parent.followUp(...args);
+        } else {
+            // @ts-expect-error 2322
+            return this.parent.reply(...args);
+        }
     }
 
     /**
@@ -363,21 +373,24 @@ export class Context<
      */
     public reply(
         ...args: Parameters<If<P, Types['Input']['reply'], Types['Message']['reply']>>
-    ): ReturnType<If<P, Types['Input']['reply'], Types['Message']['reply']>> {
+    ): ReturnType<If<P, Types['Input']['reply'], Types['Message']['reply'] | Null>> {
         if (this.deferred || this.replied)
             throw new DiscordjsError(DiscordjsErrorCodes.InteractionAlreadyReplied);
 
-        // @ts-expect-error 2556
-        return this.parent instanceof ChatInput
-            ? // @ts-expect-error 2556
-              this.parent.reply(...args)
-            : this[_reply](...args);
+        if (this.parent instanceof ChatInput) {
+            // @ts-expect-error 2322
+            return this.parent.reply(...args);
+        }
+
+        // @ts-expect-error 2322
+        return this[_sendReply](...args);
     }
 
-    public async [_reply](...args: any[]) {
+    public async [_sendReply](...args: any[]) {
         // @ts-expect-error 2556
         return this.parent.reply(...args).then(async response => {
-            this[_replies].set(response.id, response);
+            this[_hasReplied] = true;
+            this[_firstReply] ??= response;
             return response;
         });
     }

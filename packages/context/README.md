@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="hairy maclary" src="../../.github/assets/maclary.png" width="30%"/>
+    <img alt="hairy maclary" src="https://raw.githubusercontent.com/apteryxxyz/maclary/main/.github/assets/maclary.png" width="30%"/>
     <h1>Maclary Context</h1><br/>
     <h3>Convert Discord messages and chat input into a single common object</h3><br/>
     <code>
@@ -34,13 +34,13 @@ An example is worth a thousand words. This example shows how to use the library 
 ```ts
 import { Context } from '@maclary/context';
 
-client.on('messageCreate', async (message) => {
+client.on('messageCreate', async message => {
     if (message.content !== '!hello') return;
     const context = new Context(message);
     return handleCommand(context);
 });
 
-client.on('interactionCreate', async (interaction) => {
+client.on('interactionCreate', async interaction => {
     if (interaction.commandName !== 'hello') return;
     const context = new Context(interaction);
     return handleCommand(context);

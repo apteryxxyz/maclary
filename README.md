@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="hairy maclary" src="./.github/assets/maclary.png" width="30%"/>
+    <img alt="hairy maclary" src="https://raw.githubusercontent.com/apteryxxyz/maclary/main/.github/assets/maclary.png" width="30%"/>
     <h1>Maclary</h1><br/>
     <h3>A framework intended for making the process of creating complex Discord bots easier</h3>
 </div>

@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="hairy maclary" src="../../.github/assets/maclary.png" width="30%"/>
+    <img alt="hairy maclary" src="https://raw.githubusercontent.com/apteryxxyz/maclary/main/.github/assets/maclary.png" width="30%"/>
     <h1>Maclary</h1><br/>
     <h3>A framework intended for making the process of creating complex Discord bots easier</h3><br/>
     <code>npm install maclary discord.js@dev</code><br/>
@@ -41,7 +41,7 @@ creating complex Discord bots easier.
 
 Maclary requires version >=14.7.0 of Discord.js in order to work.
 
-> **_NOTE:_**  It is important that you include the `main` field within your `package.json`, this is used to find your commands, listeners and actions.
+> **_NOTE:_** It is important that you include the `main` field within your `package.json`, this is used to find your commands, listeners and actions.
 
 These examples show how to use `maclary` in TypeScript, however it will work in JavaScript with `require` or `import`.
 
@@ -65,15 +65,13 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { Command, Preconditions } from 'maclary';
 
 function makePingMeButton(userId: string) {
-    return new ActionRowBuilder()
-        .addComponents([
-            new ButtonBuilder()
-                .setStyle(ButtonStyle.Primary)
-                .setLabel('Ping Me!')
-                .setCustomId(`pingUser,${userId}`)
-        ]);
+    return new ActionRowBuilder().addComponents([
+        new ButtonBuilder()
+            .setStyle(ButtonStyle.Primary)
+            .setLabel('Ping Me!')
+            .setCustomId(`pingUser,${userId}`),
+    ]);
 }
-
 
 export class EchoCommand extends Command<
     Command.Type.ChatInput,
@@ -86,11 +84,13 @@ export class EchoCommand extends Command<
             preconditions: [Preconditions.GuildOnly],
             name: 'echo',
             description: 'Echo the input.',
-            options: [{
-                type: Command.OptionType.String,
-                name: 'input',
-                description: 'The text to echo.'
-            }]
+            options: [
+                {
+                    type: Command.OptionType.String,
+                    name: 'input',
+                    description: 'The text to echo.',
+                },
+            ],
         });
     }
 
@@ -125,7 +125,7 @@ export class PingUserAction extends Action {
         const [, userId] = button.customId.split(',');
         const user = await this.container.client.users.fetch(userId);
         await button.reply(user.toString());
-    } 
+    }
 }
 ```
 

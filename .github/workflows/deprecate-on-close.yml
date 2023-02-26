@@ -1,0 +1,36 @@
+name: NPM Deprecate on Close
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  publish:
+    name: Deprecate on Close
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Deprecate versions
+        run: pnpm npm-deprecate --name "*pr-${PR_NUMBER}*" -d -v
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PR_NUMBER: ${{ github.event.number }}

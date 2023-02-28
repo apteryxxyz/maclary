@@ -109,7 +109,7 @@ export class CommandManager extends SetManager<Command<any, any>> {
         internalCommands: Command<any, any>[]
     ) {
         await application.commands.fetch({});
-        const externalCommands = application.commands.cache;
+        const externalCommands = application.commands.cache.clone();
         const jsonCommands = internalCommands.flatMap(int => int.toJSON());
 
         // Only patch commands if there are any differences

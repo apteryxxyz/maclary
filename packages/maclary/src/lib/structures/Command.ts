@@ -105,7 +105,7 @@ export abstract class Command<
                 name: this.name,
                 nameLocalizations: this.nameLocalizations,
                 dmPermission: this.dmPermission,
-                defaultMemberPermissions: this.defaultMemberPermissions,
+                defaultMemberPermissions: this.defaultMemberPermissions.toJSON(),
             }));
 
         return {
@@ -115,7 +115,7 @@ export abstract class Command<
             description: this.description,
             descriptionLocalizations: this.descriptionLocalizations,
             dmPermission: this.dmPermission,
-            defaultMemberPermissions: this.defaultMemberPermissions,
+            defaultMemberPermissions: this.defaultMemberPermissions.toJSON(),
             options: this.options?.map(opt => toJSON(opt)),
         };
     }

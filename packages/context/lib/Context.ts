@@ -5,6 +5,7 @@ import type {
     Locale,
     PermissionsBitField,
     Snowflake,
+    StageChannel,
     TextChannel,
 } from 'discord.js';
 import {
@@ -21,16 +22,16 @@ import { _firstReply, _hasDeferred, _hasReplied } from './symbols';
 
 const ChatInput = ChatInputCommandInteraction;
 
+type If<T, C, M> = T extends ChatInputCommandInteraction ? C : M;
+type Exclude<T, U> = T extends U ? never : T;
+type Null = () => Promise<null>;
+
 interface Types {
-    Channel: GuildTextBasedChannel | TextChannel;
+    Channel: Exclude<GuildTextBasedChannel | TextChannel, StageChannel>;
     Guild: Guild;
     Input: ChatInputCommandInteraction;
     Message: Message;
 }
-
-type If<T, C, M> = T extends ChatInputCommandInteraction ? C : M;
-
-type Null = () => Promise<null>;
 
 /**
  * A context class for a message or chat input interaction.
@@ -238,7 +239,9 @@ export class Context<
         return (
             this.parent instanceof ChatInput
                 ? this.parent.deferReply(...args)
-                : this.parent.channel.sendTyping()
+                : 'sendTyping' in this.parent.channel
+                ? this.parent.channel.sendTyping()
+                : Promise.resolve()
         ).then(response => {
             this[_hasDeferred] = true;
             return response;

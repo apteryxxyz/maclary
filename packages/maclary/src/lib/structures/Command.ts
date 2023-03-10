@@ -38,7 +38,7 @@ export abstract class Command<
     public readonly categoryLocalizations?: Discord.LocalizationMap;
 
     public readonly dmPermission: boolean = true;
-    public readonly defaultMemberPermissions = new Discord.PermissionsBitField(0n);
+    public readonly defaultMemberPermissions?: Discord.PermissionsBitField;
 
     public readonly options?: T extends Command.Type.ChatInput ? Command.OptionData[] : never;
 
@@ -105,7 +105,7 @@ export abstract class Command<
                 name: this.name,
                 nameLocalizations: this.nameLocalizations,
                 dmPermission: this.dmPermission,
-                defaultMemberPermissions: this.defaultMemberPermissions.toJSON(),
+                defaultMemberPermissions: this.defaultMemberPermissions?.toJSON() ?? null,
             }));
 
         return {
@@ -115,7 +115,7 @@ export abstract class Command<
             description: this.description,
             descriptionLocalizations: this.descriptionLocalizations,
             dmPermission: this.dmPermission,
-            defaultMemberPermissions: this.defaultMemberPermissions.toJSON(),
+            defaultMemberPermissions: this.defaultMemberPermissions?.toJSON() ?? null,
             options: this.options?.map(opt => toJSON(opt)),
         };
     }
@@ -378,10 +378,8 @@ export namespace Command {
             descriptionLocalizations: s.record(s.string.lengthLessThanOrEqual(100)).optional,
             category: s.string.optional,
             categoryLocalizations: s.record(s.string.optional).optional,
-            dmPermission: s.boolean.optional.default(true),
-            defaultMemberPermissions: s
-                .instance(Discord.PermissionsBitField)
-                .default(new Discord.PermissionsBitField(0n)).optional,
+            dmPermission: s.boolean.default(true),
+            defaultMemberPermissions: s.instance(Discord.PermissionsBitField).optional,
             options: s.any.array.default([]),
             preconditions: s.any.array.default([]),
         });

@@ -38,7 +38,7 @@ export abstract class Command<
     public readonly categoryLocalizations?: Discord.LocalizationMap;
 
     public readonly dmPermission: boolean = true;
-    public readonly defaultMemberPermissions?: Discord.PermissionsBitField;
+    public readonly defaultMemberPermissions?: Discord.PermissionsBitField | null = null;
 
     public readonly options?: T extends Command.Type.ChatInput ? Command.OptionData[] : never;
 
@@ -344,8 +344,9 @@ export namespace Command {
          * The default bitfield used to determine whether this
          * command can be used in a guild.
          * @since 1.0.0
+         * @default null
          */
-        defaultMemberPermissions?: Discord.PermissionsBitField;
+        defaultMemberPermissions?: Discord.PermissionsBitField | null;
 
         /**
          * Indicates whether the command is available in DMs with the
@@ -379,7 +380,9 @@ export namespace Command {
             category: s.string.optional,
             categoryLocalizations: s.record(s.string.optional).optional,
             dmPermission: s.boolean.default(true),
-            defaultMemberPermissions: s.instance(Discord.PermissionsBitField).optional,
+            defaultMemberPermissions: s
+                .union(s.instance(Discord.PermissionsBitField), s.null)
+                .default(null),
             options: s.any.array.default([]),
             preconditions: s.any.array.default([]),
         });

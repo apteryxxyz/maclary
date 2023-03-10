@@ -74,7 +74,7 @@ export function compareBases(a: any, b: any, prefix = ''): Differences {
     // Compare default member permissions
     if (
         a.defaultMemberPermissions !== b.defaultMemberPermissions ||
-        !a.defaultMemberPermissions?.equals(b.defaultMemberPermissions)
+        a.defaultMemberPermissions?.equals(b.defaultMemberPermissions) === false
     )
         differences.push([
             `${prefix}defaultMemberPermissions`,

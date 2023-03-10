@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [maclary@1.0.2](https://github.com/apteryxxyz/maclary/compare/maclary@1.0.1...maclary@1.0.2) - (2023-03-10)
+
+## 🐛 Bug Fixes
+
+- **Command:** Make `defaultMemberPermissions` default `null` ([fc03dd6](https://github.com/apteryxxyz/maclary/commit/fc03dd68b903bfaf8d94dfe1eb3662793e463ddc))
+- **Command:** Default permissions restricting all commands ([fe5ca94](https://github.com/apteryxxyz/maclary/commit/fe5ca945e55884739e7c731e66ec8ca944b8253f))
+
 # [maclary@1.0.1](https://github.com/apteryxxyz/maclary/compare/maclary@1.0.0...maclary@1.0.1) - (2023-02-28)
 
 ## 🐛 Bug Fixes

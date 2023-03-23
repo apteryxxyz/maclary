@@ -1,0 +1,5 @@
+org: maclary
+name: lists
+packagePath: packages/lists
+tagTemplate: '@maclary/lists@{{new-version}}'
+monoRepo: true

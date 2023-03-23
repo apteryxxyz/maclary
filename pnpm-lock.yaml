@@ -76,6 +76,9 @@ importers:
     devDependencies:
       discord.js: 14.7.1
 
+  packages/lists:
+    specifiers: {}
+
   packages/maclary:
     specifiers:
       '@sapphire/shapeshift': ^3.8.1

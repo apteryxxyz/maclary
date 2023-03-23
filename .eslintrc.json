@@ -4,6 +4,7 @@
         "no-warning-comments": "off",
         "@typescript-eslint/no-throw-literal": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "@typescript-eslint/dot-notation": "off"
     }
 }

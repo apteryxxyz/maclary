@@ -1,0 +1,37 @@
+{
+    "name": "@maclary/lists",
+    "version": "0.1.0",
+    "description": "Statistics auto poster for all major Discord bot lists",
+    "author": {
+        "name": "ApteryxXYZ",
+        "url": "https://apteryx.xyz/"
+    },
+    "license": "MIT",
+    "homepage": "https://github.com/apteryxxyz/maclary/packages/lists#README",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/apteryxxyz/maclary.git",
+        "directory": "packages/maclary"
+    },
+    "bugs": {
+        "url": "https://github.com/apteryxxyz/maclary/issues"
+    },
+    "files": ["dist", "!**.js.map"],
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+    },
+    "scripts": {
+        "lint": "eslint --ext .js,.ts lib",
+        "format": "prettier --write \"lib/**/*.{js,ts}\" && npm run lint -- --fix",
+        "docs": "typedoc-json-parser",
+        "build:compile": "tsup",
+        "build:module": "gen-esm-wrapper dist/index.js dist/index.mjs",
+        "build": "npm run build:compile && npm run build:module",
+        "prepack": "npm run format && npm run build",
+        "release": "cliff-jumper"
+    }
+}

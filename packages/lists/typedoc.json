@@ -1,0 +1,6 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "Lists",
+    "json": "../../docs/lists.json",
+    "entryPoints": ["lib/index.ts"]
+}

@@ -11,7 +11,7 @@ export class DiscordBotList extends List {
     public async postStatistics(options: List.StatisticsOptions) {
         options = Validate.statisticsOptions(options);
 
-        await this._performRequest('POST', `/bot/${this.clientId}/stats`, {
+        await this._performRequest('POST', `/bots/${this.clientId}/stats`, {
             body: {
                 guilds: options.guildCount,
                 users: options.userCount,

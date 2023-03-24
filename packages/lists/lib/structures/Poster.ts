@@ -5,22 +5,32 @@ import type { KeyOfLists } from '~/lists';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
+/**
+ * The statistics poster class.
+ */
 export class Poster extends EventEmitter {
+    /** The lists assigned to this poster. */
     public readonly lists: ReadonlyMap<KeyOfLists, List>;
+    /** The options for this poster. */
     public readonly options: Poster.Options;
-
+    /** The interval for automatically posting statistics. */
     private _autoPostInterval: NodeJS.Timeout | null = null;
 
+    /**
+     * @param lists The lists to post to.
+     * @param options The poster options.
+     */
     public constructor(lists: List[], options: Poster.Options) {
         super();
 
         const listEntries = lists.map(list => [list.key, list] as [KeyOfLists, List]);
         this.lists = Utilities.makeReadonlyMap(listEntries);
-
-        // TODO: Validate options
-        this.options = options;
+        this.options = Validate.posterOptions(options);
     }
 
+    /**
+     * Post your client statistics to all bot lists.
+     */
     public async postStatistics() {
         const options = await this._buildPostOptions();
 
@@ -30,29 +40,39 @@ export class Poster extends EventEmitter {
         this.emit(Poster.Events.AllPostDone, options);
     }
 
-    private async _buildPostOptions(): Promise<List.PostOptions> {
-        const guildCount = await this.options.guildCount();
-        const userCount = await this.options.userCount();
-        const shardCount = await this.options.shardCount();
-        const voiceConnectionCount = await this.options.voiceConnectionCount();
-
-        return Validate.postOptions({
-            guildCount,
-            userCount,
-            shardCount,
-            voiceConnectionCount,
-        });
-    }
-
+    /**
+     * Start automatically posting statistics to all bot lists.
+     * @param interval The interval in milliseconds.
+     */
     public startAutoPost(interval: number = 1_800_000) {
         if (this._autoPostInterval) this.stopAutoPost();
         this._autoPostInterval = setInterval(() => this.postStatistics(), interval);
     }
 
+    /**
+     * Stop automatically posting statistics to all bot lists.
+     */
     public stopAutoPost() {
         if (!this._autoPostInterval) return;
         clearInterval(this._autoPostInterval);
         this._autoPostInterval = null;
+    }
+
+    /**
+     * Fetch statistics and build the options.
+     */
+    private async _buildPostOptions(): Promise<List.StatisticsOptions> {
+        const guildCount = await this.options.guildCount();
+        const userCount = await this.options.userCount();
+        const shardCount = await this.options.shardCount();
+        const voiceConnectionCount = await this.options.voiceConnectionCount();
+
+        return Validate.statisticsOptions({
+            guildCount,
+            userCount,
+            shardCount,
+            voiceConnectionCount,
+        });
     }
 }
 
@@ -62,13 +82,18 @@ export namespace Poster {
     }
 
     export interface EventParams {
-        [Events.AllPostDone]: [options: List.PostOptions];
+        [Events.AllPostDone]: [options: List.StatisticsOptions];
     }
 
+    /** The poster options. */
     export interface Options {
-        guildCount(): Promise<number> | number;
-        userCount(): Promise<number> | number;
-        shardCount(): Promise<number> | number;
-        voiceConnectionCount(): Promise<number> | number;
+        /** Function used to get guild count. */
+        guildCount(): Promise<number>;
+        /** Function used to get user count. */
+        userCount(): Promise<number>;
+        /** Function used to get shard count. */
+        shardCount(): Promise<number>;
+        /** Function used to get voice connection count. */
+        voiceConnectionCount(): Promise<number>;
     }
 }

@@ -9,14 +9,14 @@ export class BotsOnDiscord extends List {
     public readonly websiteUrl = 'https://bots.ondiscord.xyz' as const;
     public readonly apiUrl = 'https://bots.ondiscord.xyz/bot-api' as const;
 
-    public async postStatistics(options: List.PostOptions) {
-        options = Validate.postOptions(options);
+    public async postStatistics(options: List.StatisticsOptions) {
+        options = Validate.statisticsOptions(options);
 
         await this._performRequest('POST', `/bots/${this.clientId}/guilds`, {
             body: { guildCount: options.guildCount },
             requiresApiToken: true,
         })
-            .then(() => this.emit(List.Events.PostSuccess, options))
-            .catch(error => this.emit(List.Events.PostError, options, error));
+            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
+            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
     }
 }

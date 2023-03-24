@@ -8,8 +8,8 @@ export class DiscordBotList extends List {
     public readonly websiteUrl = 'https://discordbotlist.com' as const;
     public readonly apiUrl = 'https://discordbotlist.com/api/v1' as const;
 
-    public async postStatistics(options: List.PostOptions) {
-        options = Validate.postOptions(options);
+    public async postStatistics(options: List.StatisticsOptions) {
+        options = Validate.statisticsOptions(options);
 
         await this._performRequest('POST', `/bot/${this.clientId}/stats`, {
             body: {
@@ -19,8 +19,8 @@ export class DiscordBotList extends List {
             },
             requiresApiToken: true,
         })
-            .then(() => this.emit(List.Events.PostSuccess, options))
-            .catch(error => this.emit(List.Events.PostError, options, error));
+            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
+            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
     }
 
     protected override _formatApiToken() {

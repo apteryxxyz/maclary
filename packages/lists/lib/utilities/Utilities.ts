@@ -1,4 +1,8 @@
 export class Utilities extends null {
+    /**
+     * Create a runtime readonly map.
+     * @param entries Initial entries.
+     */
     public static makeReadonlyMap<K, V>(entries: [K, V][]): ReadonlyMap<K, V> {
         const map = new Map(entries);
 
@@ -14,8 +18,12 @@ export class Utilities extends null {
         });
     }
 
-    public static deleteUndefinedProperties<T extends Record<string, unknown>>(obj: T): T {
-        for (const key of Object.keys(obj)) if (obj[key] === undefined) delete obj[key];
-        return obj;
+    /**
+     * Delete all undefined properties from an object.
+     * @param object The object to delete properties from.
+     */
+    public static deleteUndefinedProperties<T extends Record<string, unknown>>(object: T): T {
+        for (const key of Object.keys(object)) if (object[key] === undefined) delete object[key];
+        return object;
     }
 }

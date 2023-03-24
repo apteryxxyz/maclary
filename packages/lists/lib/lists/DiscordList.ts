@@ -8,15 +8,15 @@ export class DiscordList extends List {
     public readonly websiteUrl = 'https://discordlist.gg' as const;
     public readonly apiUrl = 'https://api.discordlist.gg/v0' as const;
 
-    public async postStatistics(options: List.PostOptions) {
-        options = Validate.postOptions(options);
+    public async postStatistics(options: List.StatisticsOptions) {
+        options = Validate.statisticsOptions(options);
 
         await this._performRequest('POST', `/bot/${this.clientId}/guilds`, {
             body: { count: options.guildCount },
             requiresApiToken: true,
         })
-            .then(() => this.emit(List.Events.PostSuccess, options))
-            .catch(error => this.emit(List.Events.PostError, options, error));
+            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
+            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
     }
 
     protected override _formatApiToken() {

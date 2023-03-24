@@ -3,59 +3,28 @@ import { URL } from 'node:url';
 import { Error } from '~/errors/BotListsError';
 import { Request } from '~/utilities/Request';
 
+/**
+ * Each bot list class must extend this class.
+ */
 export abstract class List extends EventEmitter {
-    /**
-     * The unique identifer for this list.
-     * @since 0.1.0
-     */
+    /** The unique identifer for this list. */
     public abstract readonly key: string;
-
-    /**
-     * The name of this list.
-     * @since 0.1.0
-     */
+    /** The name of this list. */
     public abstract readonly title: string;
-
-    /**
-     * A link to this lists logo.
-     * @since 0.1.0
-     */
+    /** A link to this lists logo. */
     public abstract readonly logoUrl: string;
-
-    /**
-     * A link to this lists website.
-     * @since 0.1.0
-     */
+    /** A link to this lists website. */
     public abstract readonly websiteUrl: string;
-
-    /**
-     * The base URL for this lists API.
-     * @since 0.1.0
-     */
+    /** The base URL for this lists API. */
     public abstract readonly apiUrl: string;
-
-    /**
-     * ID of the bot.
-     * @since 0.1.0
-     */
+    /** ID of the bot. */
     public readonly clientId: string;
-
-    /**
-     * API token for this list that belongs to the client.
-     * @since 0.1.0
-     */
+    /** API token for this list that belongs to the client. */
     public readonly apiToken: string;
-
-    // /**
-    //  * Webhook token for this list that belongs to the client.
-    //  * @since 0.2.0
-    //  */
-    // public readonly webhookToken?: string;
 
     /**
      * @param clientId The ID of the bot.
      * @param apiToken The API token for this list.
-     * @since 0.1.0
      */
     public constructor(clientId: string, apiToken: string) {
         super();
@@ -63,14 +32,6 @@ export abstract class List extends EventEmitter {
         this.clientId = clientId;
         this.apiToken = apiToken;
     }
-
-    // public constructor(clientId: string, apiToken: string, webhookToken?: string) {
-    //     super();
-
-    //     this.clientId = clientId;
-    //     this.apiToken = apiToken;
-    //     this.webhookToken = webhookToken;
-    // }
 
     /**
      * Perform a request to this lists API.
@@ -96,7 +57,6 @@ export abstract class List extends EventEmitter {
     /**
      * Format the API token for this list.
      * For example if the token requires a token type.
-     * @since 0.1.0
      */
     protected _formatApiToken() {
         return this.apiToken;
@@ -105,26 +65,30 @@ export abstract class List extends EventEmitter {
     /**
      * Post your client statistics to this list.
      * @param options The options to post.
-     * @since 0.1.0
      */
-    public abstract postStatistics(options: List.PostOptions): Promise<void>;
+    public abstract postStatistics(options: List.StatisticsOptions): Promise<void>;
 }
 
 export namespace List {
     export enum Events {
-        PostSuccess = 'postSuccess',
-        PostError = 'postError',
+        PostStatisticsSuccess = 'postStatisticsSuccess',
+        PostStatisticsError = 'postStatisticsError',
     }
 
     export interface EventParams {
-        [Events.PostSuccess]: [options: PostOptions];
-        [Events.PostError]: [options: PostOptions, error: Error];
+        [Events.PostStatisticsSuccess]: [options: StatisticsOptions];
+        [Events.PostStatisticsError]: [options: StatisticsOptions, error: Error];
     }
 
-    export interface PostOptions {
+    /** The statistics options to post to a list. */
+    export interface StatisticsOptions {
+        /** The number of guilds. */
         guildCount: number;
+        /** The number of users. */
         userCount: number;
+        /** The number of shards. */
         shardCount: number;
+        /** The number of voice connections. */
         voiceConnectionCount: number;
     }
 }

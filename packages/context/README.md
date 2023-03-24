@@ -20,6 +20,8 @@
 
 Context is a library that allows you to convert Discord.js messages and chat inputs into a single common object. This allows you to easily create commands that work as both slash and prefix commands.
 
+## 📚 Documentation
+
 <div align="center" style="padding-top: 2rem; padding-bottom: 1rem">
 
 | **Documentation and guides coming soon** |

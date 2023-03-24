@@ -10,5 +10,6 @@
 
 [![Version](https://img.shields.io/npm/v/maclary?color=red&label=maclary)](https://github.com/maclary/maclary)
 [![Version](https://img.shields.io/npm/v/@maclary/context?color=red&label=@maclary/context)](https://github.com/apteryxxyz/maclary/main/packages/context)
+[![Version](https://img.shields.io/npm/v/@maclary/lists?color=red&label=@maclary/context)](https://github.com/apteryxxyz/maclary/main/packages/lists)
 
 </div>

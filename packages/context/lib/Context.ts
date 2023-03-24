@@ -35,7 +35,7 @@ interface Types {
 
 /**
  * A context class for a message or chat input interaction.
- * @template P The parent type, either a {@link ChatInputCommandInteraction} or a {@link Message}.
+ * @template P The parent type, either a ChatInputCommandInteraction or a Message.
  */
 export class Context<
     P extends Types['Input'] | Types['Message'] = Types['Input'] | Types['Message']
@@ -46,6 +46,9 @@ export class Context<
     private [_hasReplied] = false;
     private [_firstReply]: Message | null = null;
 
+    /**
+     * @param parent The parent of this context, either a ChatInputCommandInteraction or a Message.
+     */
     public constructor(parent: P) {
         if (parent instanceof ChatInput === parent instanceof Message)
             throw new TypeError('P must be a `ChatInputCommandInteraction` or `Message`');
@@ -358,9 +361,9 @@ export class Context<
     // public isMessage(): this is Context<Message> {
     //     return this.parent instanceof Message;
     // }
-    public isChatInput(): this is Context<ChatInputCommandInteraction> {
-        return this.parent instanceof ChatInput;
-    }
+    // public isChatInput(): this is Context<ChatInputCommandInteraction> {
+    //     return this.parent instanceof ChatInput;
+    // }
 
     /**
      * Sends the initial reply to this.

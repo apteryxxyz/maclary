@@ -1,6 +1,6 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "name": "Maclary",
-    "entryPoints": ["src/index.ts"],
-    "json": "../../docs/maclary.json"
+    "json": "../../docs/maclary.json",
+    "entryPoints": ["src/index.ts"]
 }

@@ -2,6 +2,7 @@
     "name": "maclary",
     "version": "1.0.2",
     "description": "A framework intended for making the process of creating complex Discord bots easier",
+    "keywords": ["discord", "bot", "framework", "discord.js", "plugin", "command", "event"],
     "author": {
         "name": "ApteryxXYZ",
         "url": "https://apteryx.xyz/"
@@ -16,10 +17,7 @@
     "bugs": {
         "url": "https://github.com/apteryxxyz/maclary/issues"
     },
-    "files": [
-        "dist",
-        "!**.js.map"
-    ],
+    "files": ["dist", "!**.js.map"],
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {

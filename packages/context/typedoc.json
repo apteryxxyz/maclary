@@ -1,6 +1,6 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "name": "Context",
-    "entryPoints": ["lib/index.ts"],
-    "json": "../../docs/context.json"
+    "json": "../../docs/context.json",
+    "entryPoints": ["lib/index.ts"]
 }

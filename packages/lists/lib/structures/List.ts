@@ -90,7 +90,7 @@ export abstract class List extends EventEmitter {
         if (options.requiresApiToken && !options.headers['Authorization'])
             throw new Error('MissingAPIToken', this.title);
 
-        return Request.perform<R>(method, new URL(path, this.apiUrl), options);
+        return Request.perform<R>(method, new URL(this.apiUrl + path), options);
     }
 
     /**

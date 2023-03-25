@@ -1,6 +1,6 @@
 {
     "name": "@maclary/lists",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Statistics auto poster for all major Discord bot lists",
     "keywords": ["discord", "bot", "statistics", "poster", "autoposter", "lists"],
     "author": {

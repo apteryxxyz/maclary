@@ -35,9 +35,9 @@ export class Poster extends EventEmitter {
         const options = await this._buildPostOptions();
 
         const promises: Promise<void>[] = [];
-        for (const list of this.lists.values()) await list.postStatistics(options);
+        for (const list of this.lists.values()) promises.push(list.postStatistics(options));
         await Promise.all(promises);
-        this.emit(Poster.Events.AllPostDone, options);
+        this.emit(Poster.Events.AllPostStatisticsDone, options);
     }
 
     /**
@@ -78,22 +78,22 @@ export class Poster extends EventEmitter {
 
 export namespace Poster {
     export enum Events {
-        AllPostDone = 'allPostDone',
+        AllPostStatisticsDone = 'allPostStatisticsDone',
     }
 
     export interface EventParams {
-        [Events.AllPostDone]: [options: List.StatisticsOptions];
+        [Events.AllPostStatisticsDone]: [options: List.StatisticsOptions];
     }
 
     /** The poster options. */
     export interface Options {
         /** Function used to get guild count. */
-        guildCount(): Promise<number>;
+        guildCount(): Promise<number> | number;
         /** Function used to get user count. */
-        userCount(): Promise<number>;
+        userCount(): Promise<number> | number;
         /** Function used to get shard count. */
-        shardCount(): Promise<number>;
+        shardCount(): Promise<number> | number;
         /** Function used to get voice connection count. */
-        voiceConnectionCount(): Promise<number>;
+        voiceConnectionCount(): Promise<number> | number;
     }
 }

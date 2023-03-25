@@ -1,4 +1,5 @@
 import { Blist } from './Blist';
+import { BotListMe } from './BotlistMe';
 import { BotsOnDiscord } from './BotsOnDiscord';
 import { DiscordBotList } from './DiscordBotList';
 import { DiscordBotListEU } from './DiscordBotListEU';
@@ -20,6 +21,7 @@ import { YABL } from './YABL';
 
 export const Lists = {
     Blist,
+    BotListMe,
     BotsOnDiscord,
     DiscordBotList,
     DiscordBotListEU,

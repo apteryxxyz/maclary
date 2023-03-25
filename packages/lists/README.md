@@ -72,6 +72,12 @@ poster.stopAutoPoster();
         <td>Blist</td>
     </tr>
     <tr>
+        <td><img src="https://docs.botlist.me/icon.png" width="32" height="32" /></td>
+        <td>Botlist.me</td>
+        <td><a href="https://botlist.me">botlist.me</a></td>
+        <td>BotListMe</td>
+    </tr>
+    <tr>
         <td><img src="https://bots.ondiscord.xyz/favicon/android-chrome-256x256.png" width="32" height="32" /></td>
         <td>Bots on Discord</td>
         <td><a href="https://bots.ondiscord.xyz">bots.ondiscord.xyz</a></td>

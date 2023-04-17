@@ -14,8 +14,6 @@ export class Disforge extends List {
         await this._performRequest('POST', `/botstats/${this.clientId}`, {
             body: { servers: options.guildCount },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 }

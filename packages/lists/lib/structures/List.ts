@@ -63,23 +63,13 @@ export abstract class List extends EventEmitter {
     }
 
     /**
-     * Post your client statistics to this list.
+     * Send your client statistics to this list.
      * @param options The options to post.
      */
     public abstract postStatistics(options: List.StatisticsOptions): Promise<void>;
 }
 
 export namespace List {
-    export enum Events {
-        PostStatisticsSuccess = 'postStatisticsSuccess',
-        PostStatisticsError = 'postStatisticsError',
-    }
-
-    export interface EventParams {
-        [Events.PostStatisticsSuccess]: [options: StatisticsOptions];
-        [Events.PostStatisticsError]: [options: StatisticsOptions, error: Error];
-    }
-
     /** The statistics options to post to a list. */
     export interface StatisticsOptions {
         /** The number of guilds. */

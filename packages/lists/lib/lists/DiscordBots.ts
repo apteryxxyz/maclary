@@ -15,8 +15,6 @@ export class DiscordBots extends List {
         await this._performRequest('POST', `/bots/${this.clientId}/stats`, {
             body: { guildCount: options.guildCount, shardCount: options.shardCount },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 }

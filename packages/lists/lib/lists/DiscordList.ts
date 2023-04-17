@@ -14,9 +14,7 @@ export class DiscordList extends List {
         await this._performRequest('POST', `/bot/${this.clientId}/guilds`, {
             body: { count: options.guildCount },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 
     protected override _formatApiToken() {

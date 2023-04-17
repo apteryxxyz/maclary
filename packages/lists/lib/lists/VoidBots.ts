@@ -14,8 +14,6 @@ export class VoidBots extends List {
         await this._performRequest('POST', `/bot/stats/${this.clientId}`, {
             body: { server_count: options.guildCount, shard_count: options.shardCount },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 }

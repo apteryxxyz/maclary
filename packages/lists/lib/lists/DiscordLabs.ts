@@ -12,13 +12,8 @@ export class DiscordLabs extends List {
         options = Validate.statisticsOptions(options);
 
         await this._performRequest('POST', `/bot/${this.clientId}/stats`, {
-            body: {
-                server_count: options.guildCount,
-                shard_count: options.shardCount,
-            },
+            body: { server_count: options.guildCount, shard_count: options.shardCount },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 }

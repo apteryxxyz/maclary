@@ -1,6 +1,7 @@
 import { EventEmitter } from 'node:events';
 import { clearInterval, setInterval } from 'node:timers';
 import type { List } from './List';
+import type { RequestError } from '~/errors/RequestError';
 import type { KeyOfLists } from '~/lists';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
@@ -29,15 +30,14 @@ export class Poster extends EventEmitter {
     }
 
     /**
-     * Post your client statistics to all bot lists.
+     * Send your client statistics to all bot lists.
      */
     public async postStatistics() {
-        const options = await this._buildPostOptions();
+        const options = await this._buildStatisticsOptions();
 
         const promises: Promise<void>[] = [];
         for (const list of this.lists.values()) promises.push(list.postStatistics(options));
         await Promise.all(promises);
-        this.emit(Poster.Events.AllPostStatisticsDone, options);
     }
 
     /**
@@ -46,7 +46,19 @@ export class Poster extends EventEmitter {
      */
     public startAutoPoster(interval: number = 1_800_000) {
         if (this._autoPostInterval) this.stopAutoPoster();
-        this._autoPostInterval = setInterval(() => this.postStatistics(), interval);
+
+        this._autoPostInterval = setInterval(async () => {
+            const options = await this._buildStatisticsOptions();
+
+            const promises: Promise<void>[] = [];
+            const errors: RequestError[] = [];
+            for (const list of this.lists.values())
+                promises.push(list.postStatistics(options).catch(error => void errors.push(error)));
+            await Promise.all(promises);
+
+            if (errors.length) this.emit(Poster.Events.AutoPostFail, options, errors);
+            else this.emit(Poster.Events.AutoPostSuccess, options);
+        }, interval);
     }
 
     /**
@@ -61,7 +73,7 @@ export class Poster extends EventEmitter {
     /**
      * Fetch statistics and build the options.
      */
-    private async _buildPostOptions(): Promise<List.StatisticsOptions> {
+    private async _buildStatisticsOptions(): Promise<List.StatisticsOptions> {
         const guildCount = await this.options.guildCount();
         const userCount = await this.options.userCount();
         const shardCount = await this.options.shardCount();
@@ -78,11 +90,13 @@ export class Poster extends EventEmitter {
 
 export namespace Poster {
     export enum Events {
-        AllPostStatisticsDone = 'allPostStatisticsDone',
+        AutoPostSuccess = 'autoPostSuccess',
+        AutoPostFail = 'autoPostFail',
     }
 
     export interface EventParams {
-        [Events.AllPostStatisticsDone]: [options: List.StatisticsOptions];
+        [Events.AutoPostSuccess]: [options: List.StatisticsOptions];
+        [Events.AutoPostFail]: [options: List.StatisticsOptions, errors: RequestError[]];
     }
 
     /** The poster options. */

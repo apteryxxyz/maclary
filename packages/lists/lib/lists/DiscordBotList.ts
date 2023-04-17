@@ -18,9 +18,7 @@ export class DiscordBotList extends List {
                 voice_connections: options.voiceConnectionCount,
             },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 
     protected override _formatApiToken() {

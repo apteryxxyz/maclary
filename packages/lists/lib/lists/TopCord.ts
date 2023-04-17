@@ -14,8 +14,6 @@ export class TopCord extends List {
         await this._performRequest('POST', `/bot/${this.clientId}/stats`, {
             body: { guilds: options.guildCount, shards: options.shardCount },
             requiresApiToken: true,
-        })
-            .then(() => this.emit(List.Events.PostStatisticsSuccess, options))
-            .catch(error => this.emit(List.Events.PostStatisticsError, options, error));
+        });
     }
 }

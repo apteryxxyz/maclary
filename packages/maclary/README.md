@@ -1,9 +1,9 @@
 <div align="center">
     <h1><b>Maclary</b></h1><br/>
     <h3>A framework intended for making the process of creating complex Discord bots easier</h3><br/>
-    <code>npm install maclary discord.js@dev</code><br/>
-    <code>yarn add maclary discord.js@dev</code/><br/>
-    <code>pnpm add maclary discord.js@dev</code><br/>
+    <code>npm install maclary discord.js</code><br/>
+    <code>yarn add maclary discord.js</code/><br/>
+    <code>pnpm add maclary discord.js</code><br/>
 </div>
 
 </div>

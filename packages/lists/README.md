@@ -1,12 +1,9 @@
 <div align="center">
-    <h1><b>Maclary</b></h1><br/>
     <h1>Maclary Lists</h1><br/>
     <h3>Statistics auto poster for all major Discord bot lists</h3><br/>
-    <code>
-    npm install @maclary/lists discord.js@dev<br/>
-    yarn add @maclary/lists discord.js@dev<br/>
-    pnpm add @maclary/lists discord.js@dev
-    </code><br/>
+    <code>npm install @maclary/lists</code><br/>
+    <code>yarn add @maclary/lists</code/><br/>
+    <code>pnpm add @maclary/lists</code><br/>
 </div>
 
 <div align="center">
@@ -42,11 +39,13 @@ const lists = [
     ...
 ];
 
+// This example uses 'discord.js' and '@discordjs/voice'
 const poster = new Poster(lists, {
     shardCount: () => client.shard?.count ?? 1,
     guildCount: () => client.guilds.cache.size,
     userCount: () => client.guilds.cache.reduce((a, b) => a + b.memberCount, 0),
-    voiceConnectionCount: () => client.voice.connections.size,
+    // 'getGroups' is a function within '@discordjs/voice', you may prefer to just return 0
+    voiceConnectionCount: () => getGroups().reduce((a, b) => a + b.size, 0),
 });
 
 poster.startAutoPoster();

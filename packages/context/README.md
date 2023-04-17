@@ -1,12 +1,9 @@
 <div align="center">
-    <h1><b>Maclary</b></h1><br/>
     <h1>Maclary Context</h1><br/>
     <h3>Convert Discord messages and chat input into a single common object</h3><br/>
-    <code>
-    npm install @maclary/context discord.js@dev<br/>
-    yarn add @maclary/context discord.js@dev<br/>
-    pnpm add @maclary/context discord.js@dev
-    </code><br/>
+    <code>npm install @maclary/context</code><br/>
+    <code>yarn add @maclary/context</code/><br/>
+    <code>pnpm add @maclary/context</code><br/>
 </div>
 
 <div align="center">

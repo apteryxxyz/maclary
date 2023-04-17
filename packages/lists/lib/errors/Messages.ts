@@ -1,7 +1,8 @@
 export const Messages = {
-    MissingAPIToken: (listTitle: string) => `An authorization token is required for ${listTitle}`,
-    MissingWebhookToken: (listTitle: string) => `A webhook token is required for ${listTitle}`,
+    MissingAPIToken: (list: string) => `An authorization token is required for ${list}`,
+    MissingWebhookToken: (list: string) => `A webhook token is required for ${list}`,
 
-    InvalidType: (type: string) => `Value must be a ${type}.`,
-    MustBePositive: (value: number) => `Value must be positive, received ${value}.`,
+    InvalidType: (name: string, type: string) => `'${name}' must be a ${type}.`,
+    MustBePositive: (name: string, value: number) =>
+        `'${name}' must be positive, received ${value}.`,
 };

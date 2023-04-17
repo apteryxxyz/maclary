@@ -1,10 +1,10 @@
 import { Messages } from './Messages';
 
 function makeError(Base: typeof Error) {
-    return class ListsError extends Base {
-        public readonly code: keyof typeof Messages;
+    return class ListsError<K extends keyof typeof Messages> extends Base {
+        public readonly code: K;
 
-        public constructor(code: keyof typeof Messages, ...args: unknown[]) {
+        public constructor(code: K, ...args: Parameters<(typeof Messages)[K]>) {
             super(resolveMessage(code, ...args));
             this.code = code;
             Error.prepareStackTrace?.(this, ListsError as any);
@@ -16,11 +16,14 @@ function makeError(Base: typeof Error) {
     };
 }
 
-function resolveMessage(code: keyof typeof Messages, ...args: unknown[]) {
+function resolveMessage<K extends keyof typeof Messages>(
+    code: K,
+    ...args: Parameters<(typeof Messages)[K]>
+) {
     const message = Messages[code];
     if (!message) throw new Error('No message associated with the code provided.');
 
-    // @ts-expect-error 2556
+    // @ts-expect-error Tuple type thing
     if (typeof message === 'function') return message(...args);
 
     args.unshift(message);

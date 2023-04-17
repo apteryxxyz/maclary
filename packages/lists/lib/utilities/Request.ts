@@ -1,5 +1,6 @@
 import process from 'node:process';
 import { URL } from 'node:url';
+import { RequestError } from '~/errors/RequestError';
 
 const UserAgent =
     `@maclary/lists@[VI]{{inject}}[/VI], node.js/${process.version}` as `@maclary/lists@${string}, node.js/${string}`;
@@ -28,8 +29,11 @@ export class Request extends null {
         headers.append('Content-Type', 'application/json');
 
         const body = options.body ? JSON.stringify(options.body) : undefined;
+        const response = await fetch(url, { method, headers, body });
+        if (response.ok) return response.json();
 
-        return fetch(url, { method, headers, body }).then(res => res.json());
+        const text = await response.text();
+        throw new RequestError(response.statusText, text);
     }
 }
 

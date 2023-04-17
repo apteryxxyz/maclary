@@ -1,5 +1,5 @@
 import { Blist } from './Blist';
-import { BotListMe } from './BotlistMe';
+import { BotListMe } from './BotListMe';
 import { BotsOnDiscord } from './BotsOnDiscord';
 import { DiscordBotList } from './DiscordBotList';
 import { DiscordBotListEU } from './DiscordBotListEU';

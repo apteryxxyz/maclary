@@ -1,13 +1,13 @@
 import { Messages } from './Messages';
 
 function makeError(Base: typeof Error) {
-    return class BotListsError extends Base {
+    return class ListsError extends Base {
         public readonly code: keyof typeof Messages;
 
         public constructor(code: keyof typeof Messages, ...args: unknown[]) {
             super(resolveMessage(code, ...args));
             this.code = code;
-            Error.prepareStackTrace?.(this, BotListsError as any);
+            Error.prepareStackTrace?.(this, ListsError as any);
         }
 
         public override get name() {

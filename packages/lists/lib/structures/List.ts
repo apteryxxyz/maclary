@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { URL } from 'node:url';
-import { Error } from '~/errors/BotListsError';
+import { Error } from '~/errors/ListsError';
 import { Request } from '~/utilities/Request';
 
 /**

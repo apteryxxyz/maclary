@@ -1,5 +1,5 @@
 import { Utilities } from './Utilities';
-import { RangeError, TypeError } from '~/errors/BotListsError';
+import { RangeError, TypeError } from '~/errors/ListsError';
 import type { List } from '~/structures/List';
 import type { Poster } from '~/structures/Poster';
 

@@ -42,17 +42,17 @@ export class Poster extends EventEmitter {
 
     /**
      * Start automatically posting statistics to all bot lists.
-     * @param interval The interval in milliseconds.
+     * @param interval The interval in milliseconds, defaults to 30 minutes.
      */
-    public startAutoPost(interval: number = 1_800_000) {
-        if (this._autoPostInterval) this.stopAutoPost();
+    public startAutoPoster(interval: number = 1_800_000) {
+        if (this._autoPostInterval) this.stopAutoPoster();
         this._autoPostInterval = setInterval(() => this.postStatistics(), interval);
     }
 
     /**
      * Stop automatically posting statistics to all bot lists.
      */
-    public stopAutoPost() {
+    public stopAutoPoster() {
         if (!this._autoPostInterval) return;
         clearInterval(this._autoPostInterval);
         this._autoPostInterval = null;

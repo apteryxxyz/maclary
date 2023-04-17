@@ -1,6 +1,5 @@
 // Root
 export * from './container';
-export * from './symbols';
 export * from './types';
 
 // Managers

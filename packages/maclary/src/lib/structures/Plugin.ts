@@ -1,4 +1,4 @@
-import { s } from '@sapphire/shapeshift';
+import { z } from 'zod';
 import { Base } from './Base';
 import type { Awaitable } from '~/types';
 
@@ -66,10 +66,10 @@ export namespace Plugin {
     }
 
     export namespace Options {
-        export const Schema = s.object({
-            name: s.string,
-            description: s.string,
-            version: s.string,
+        export const Schema = z.object({
+            name: z.string(),
+            description: z.string(),
+            version: z.string(),
         });
     }
 

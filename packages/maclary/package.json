@@ -30,6 +30,7 @@
         "!**.js.map"
     ],
     "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
     "exports": {
         "import": "./dist/index.mjs",
@@ -48,8 +49,8 @@
         "release": "cliff-jumper"
     },
     "dependencies": {
-        "@sapphire/shapeshift": "^3.8.1",
-        "lexure": "^0.17.0"
+        "lexure": "^0.17.0",
+        "zod": "^3.21.4"
     },
     "peerDependencies": {
         "discord.js": ">=14.7.0"

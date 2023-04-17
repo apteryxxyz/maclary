@@ -1,5 +1,6 @@
-import { s } from '@sapphire/shapeshift';
 import type { Client, Snowflake } from 'discord.js';
+import { Message } from 'discord.js';
+import { z } from 'zod';
 import { Base } from './Base';
 import type { Command } from './Command';
 import type { Precondition } from './Precondition';
@@ -182,43 +183,56 @@ export namespace Maclary {
     }
 
     export namespace Options {
-        export const Schema = s.object({
-            caseInsensitiveCommands: s.boolean.default(false),
-            caseInsensitivePrefixes: s.boolean.default(false),
+        export const Schema = z.object({
+            caseInsensitiveCommands: z.boolean().default(false),
+            caseInsensitivePrefixes: z.boolean().default(false),
 
-            defaultPrefix: s.union(
-                s.string.regex(Regexes.Prefix),
-                s.string.regex(Regexes.Prefix).array
-            ).optional,
-            regexPrefix: s.instance(RegExp).optional,
-            fetchPrefix: s
-                .instance(Function)
+            defaultPrefix: z
+                .union([
+                    z.string().regex(Regexes.Prefix),
+                    z.array(z.string().regex(Regexes.Prefix)),
+                ])
+                .optional(),
+            regexPrefix: z.instanceof(RegExp).optional(),
+            fetchPrefix: z
+                .function()
+                // @ts-expect-error Message is a private class
+                .args(z.union([z.instanceof(Message), z.undefined()]))
+                .returns(z.union([z.string(), z.array(z.string()), z.undefined()]))
                 .default(() => () => container.maclary.options.defaultPrefix),
-            disableMentionPrefix: s.boolean.default(false),
+            disableMentionPrefix: z.boolean().default(false),
 
-            actionIdSeparator: s.string.default(','),
-            commandCategoryDirectoryPrefix: s.string.default('@'),
-            commandGroupDirectoryPrefix: s.string.default('!'),
+            actionIdSeparator: z.string().default(','),
+            commandCategoryDirectoryPrefix: z.string().default('@'),
+            commandGroupDirectoryPrefix: z.string().default('!'),
 
-            actionPreconditionFailMessages: s
+            actionPreconditionFailMessages: z
                 .object(
                     Object.fromEntries(
-                        Object.keys(ActionFailMessages).map(key => [key, s.instance(Function)])
+                        Object.entries(ActionFailMessages).map(([key, value]) => [
+                            key,
+                            z.union([z.function().returns(z.string()), z.null()]).default(value),
+                        ])
                     )
                 )
                 .default(ActionFailMessages),
-            commandPreconditionFailMessages: s
+            commandPreconditionFailMessages: z
                 .object(
                     Object.fromEntries(
-                        Object.keys(CommandFailMessages).map(key => [key, s.instance(Function)])
+                        Object.entries(CommandFailMessages).map(([key, value]) => [
+                            key,
+                            z.union([z.function().returns(z.string()), z.null()]).default(value),
+                        ])
                     )
                 )
                 .default(CommandFailMessages),
 
-            guildId: s.union(
-                s.string.regex(Regexes.Snowflake),
-                s.string.regex(Regexes.Snowflake).array
-            ).optional,
+            guildId: z
+                .union([
+                    z.string().regex(Regexes.Snowflake),
+                    z.array(z.string().regex(Regexes.Snowflake)),
+                ])
+                .optional(),
         });
     }
 

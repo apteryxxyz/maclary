@@ -1,5 +1,5 @@
-import { s } from '@sapphire/shapeshift';
 import * as Discord from 'discord.js';
+import { z } from 'zod';
 import { Base } from './Base';
 import { Precondition } from '~/structures/Precondition';
 import type { Awaitable } from '~/types';
@@ -110,10 +110,18 @@ export namespace Action {
     }
 
     export namespace Options {
-        export const Schema = s.object({
-            id: s.string.lengthLessThanOrEqual(100),
-            preconditions: s.any.array.default([]),
-        });
+        export const Schema = z
+            .object({
+                id: z.string().max(100),
+                preconditions: z.array(z.any()).default([]),
+            })
+            .refine(
+                data => data.preconditions.every(pre => pre.prototype instanceof Precondition),
+                {
+                    message: 'All preconditions must be a subclass of Precondition.',
+                    path: ['preconditions'],
+                }
+            );
     }
 
     export interface Payload {

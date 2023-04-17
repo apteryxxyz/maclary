@@ -1,5 +1,5 @@
-import { s } from '@sapphire/shapeshift';
 import * as Discord from 'discord.js';
+import { z } from 'zod';
 import * as Lexure from './Arguments';
 import { Base } from './Base';
 import { Precondition } from './Precondition';
@@ -370,22 +370,32 @@ export namespace Command {
     }
 
     export namespace Options {
-        export const Schema = s.object({
-            type: s.nativeEnum(Type),
-            kinds: s.array(s.nativeEnum(Kind)),
-            name: s.string,
-            nameLocalizations: s.record(s.string).optional,
-            description: s.string.lengthLessThanOrEqual(100),
-            descriptionLocalizations: s.record(s.string.lengthLessThanOrEqual(100)).optional,
-            category: s.string.optional,
-            categoryLocalizations: s.record(s.string.optional).optional,
-            dmPermission: s.boolean.default(true),
-            defaultMemberPermissions: s
-                .union(s.instance(Discord.PermissionsBitField), s.null)
-                .default(null),
-            options: s.any.array.default([]),
-            preconditions: s.any.array.default([]),
-        });
+        export const Schema = z
+            .object({
+                type: z.nativeEnum(Type),
+                kinds: z.array(z.nativeEnum(Kind)),
+
+                name: z.string(),
+                nameLocalizations: z.record(z.string()).optional(),
+                description: z.string().max(100),
+                descriptionLocalizations: z.record(z.string().max(100)).optional(),
+                category: z.string().optional(),
+                categoryLocalizations: z.record(z.string().optional()).optional(),
+
+                dmPermission: z.boolean().default(true),
+                defaultMemberPermissions: z
+                    .union([z.instanceof(Discord.PermissionsBitField), z.null()])
+                    .default(null),
+                options: z.array(z.any()).default([]),
+                preconditions: z.array(z.any()).default([]),
+            })
+            .refine(
+                data => data.preconditions.every(pre => pre.prototype instanceof Precondition),
+                {
+                    message: 'All preconditions must be a subclass of Precondition',
+                    path: ['preconditions'],
+                }
+            );
     }
 
     export interface MessagePayload {

@@ -11,14 +11,14 @@ export class OnCommandPreconditionFail extends Listener<typeof Events.CommandPre
     public override async run(payload: Command.Payload, result: Precondition.Error) {
         const actionFailMessages = this.container.maclary.options.actionPreconditionFailMessages;
         const contentFn = actionFailMessages[result.identifier];
-        const textContent = contentFn.bind(payload)(...result.parameters);
+        const content = contentFn.bind(payload)(...result.parameters);
 
         if (payload.from instanceof Command.Message) {
-            await payload.from.reply(textContent);
+            await payload.from.reply(content);
         } else {
             const alreadyReplied = payload.from.deferred || payload.from.replied;
             const replyMethod = (alreadyReplied ? 'editReply' : 'reply') as 'reply';
-            await payload.from[replyMethod](textContent);
+            await payload.from[replyMethod]({ content, ephemeral: true });
         }
 
         return void 0;

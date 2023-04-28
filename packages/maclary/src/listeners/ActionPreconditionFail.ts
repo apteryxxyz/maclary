@@ -11,11 +11,11 @@ export class OnActionPreconditionFail extends Listener<typeof Events.ActionPreco
     public override async run(payload: Action.Payload, result: Precondition.Error) {
         const actionFailMessages = this.container.maclary.options.actionPreconditionFailMessages;
         const contentFn = actionFailMessages[result.identifier];
-        const textContent = contentFn.bind(payload)(...result.parameters);
+        const content = contentFn.bind(payload)(...result.parameters);
 
         const alreadyReplied = payload.from.deferred || payload.from.replied;
         const replyMethod = (alreadyReplied ? 'editReply' : 'reply') as 'reply';
-        await payload.from[replyMethod](textContent);
+        await payload.from[replyMethod]({ content, ephemeral: true });
         return void 0;
     }
 }

@@ -2,4 +2,5 @@ name: '*next*'
 package:
   - 'maclary'
   - '@maclary/context'
+  - '@maclary/lists'
 message: This version has been automatically deprecated. Please use a newer version.

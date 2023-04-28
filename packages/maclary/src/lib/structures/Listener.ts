@@ -1,9 +1,9 @@
-import type EventEmitter from 'node:events';
+import EventEmitter from 'node:events';
 import type { ClientEvents } from 'discord.js';
 import { z } from 'zod';
 import { Base } from './Base';
 import { container } from '~/container';
-import type { Awaitable, Like } from '~/types';
+import type { Awaitable } from '~/types';
 import { Events } from '~/utilities/Events';
 
 /**
@@ -15,7 +15,7 @@ export abstract class Listener<E extends keyof ClientEvents>
     extends Base
     implements Listener.Options<E>
 {
-    public readonly emitter: Like<EventEmitter, 'on' | 'once' | 'off'>;
+    public readonly emitter: EventEmitter;
     public readonly event: E;
     public readonly once: boolean;
 
@@ -27,7 +27,7 @@ export abstract class Listener<E extends keyof ClientEvents>
         super();
 
         const results = Listener.Options.Schema.parse(options);
-        this.emitter = results.emitter as Like<EventEmitter, 'on' | 'once' | 'off'>;
+        this.emitter = results.emitter;
         this.event = results.event as E;
         this.once = results.once;
     }
@@ -65,7 +65,7 @@ export namespace Listener {
          * @default container.client
          * @since 1.0.0
          */
-        emitter?: Like<EventEmitter, 'on' | 'once' | 'off'>;
+        emitter?: EventEmitter;
 
         /**
          * The event name that this listener should listen on.
@@ -83,13 +83,7 @@ export namespace Listener {
 
     export namespace Options {
         export const Schema = z.object({
-            emitter: z
-                .object({
-                    on: z.function().args(z.any(), z.any()),
-                    once: z.function().args(z.any(), z.any()),
-                    off: z.function().args(z.any(), z.any()),
-                })
-                .default(() => container.client),
+            emitter: z.instanceof(EventEmitter).default(() => container.client),
             event: z.string(),
             once: z.boolean().default(false),
         });

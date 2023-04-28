@@ -45,6 +45,7 @@ export class OnInteractionCreate extends Listener<typeof Events.InteractionCreat
             let typedError = error as Error;
             if (!(error instanceof Error)) typedError = new Error(String(error));
             this.container.client.emit(Events.ActionError, payload, typedError);
+            this.container.logger.error(typedError);
         }
     }
 
@@ -64,6 +65,7 @@ export class OnInteractionCreate extends Listener<typeof Events.InteractionCreat
             let typedError = error as Error;
             if (!(error instanceof Error)) typedError = new Error(String(error));
             this.container.client.emit(Events.CommandError, payload, typedError);
+            this.container.logger.error(typedError);
         }
     }
 }

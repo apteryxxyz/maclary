@@ -47,6 +47,7 @@ export class OnPrefixedMessage extends Listener<typeof Events.PrefixedMessage> {
             let typedError = error as Error;
             if (!(error instanceof Error)) typedError = new Error(String(error));
             client.emit(Events.CommandError, payload, typedError);
+            this.container.logger.error(typedError);
         }
     }
 

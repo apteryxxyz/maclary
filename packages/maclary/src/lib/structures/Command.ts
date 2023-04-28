@@ -139,7 +139,7 @@ export abstract class Command<
         }
 
         if (!this._isGroup || this._isManualGroup) {
-            if (typeof this.onSlash === 'function') this.onSlash(input);
+            if (typeof this.onSlash === 'function') return this.onSlash(input);
             throw new Error(`Command "${this.name}" is missing its "onSlash" handler.`);
         }
 
@@ -162,7 +162,7 @@ export abstract class Command<
         autocomplete: Command.Autocomplete
     ): Promise<unknown> {
         if (!this._isGroup || this._isManualGroup) {
-            if (typeof this.onAutocomplete === 'function') this.onAutocomplete(autocomplete);
+            if (typeof this.onAutocomplete === 'function') return this.onAutocomplete(autocomplete);
             throw new Error(`Command "${this.name}" is missing its "onAutocomplete" handler.`);
         }
 

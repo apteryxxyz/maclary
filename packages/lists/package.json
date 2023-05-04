@@ -1,7 +1,7 @@
 {
     "name": "@maclary/lists",
     "version": "0.2.0",
-    "description": "Statistics auto poster for all major Discord bot lists",
+    "description": "Combined API wrapper for all major bot lists, with features such as an auto poster",
     "keywords": ["discord", "bot", "statistics", "poster", "autoposter", "lists"],
     "author": {
         "name": "ApteryxXYZ",

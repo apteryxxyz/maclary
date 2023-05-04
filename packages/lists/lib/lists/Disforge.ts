@@ -1,7 +1,8 @@
 import { List } from '~/structures/List';
+import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
-export class Disforge extends List {
+export class Disforge extends List implements List.WithStatisticsPosting {
     public readonly key = 'disforge' as const;
     public readonly title = 'Disforge' as const;
     public readonly logoUrl = 'https://disforge.com/assets/img/ui/categories/all-bots.png' as const;
@@ -11,9 +12,16 @@ export class Disforge extends List {
     public async postStatistics(options: List.StatisticsOptions) {
         options = Validate.statisticsOptions(options);
 
-        await this._performRequest('POST', `/botstats/${this.clientId}`, {
-            body: { servers: options.guildCount },
-            requiresApiToken: true,
-        });
+        await Utilities.executePromiseWithEvents(
+            () =>
+                this._performRequest('POST', `/botstats/${this.clientId}`, {
+                    body: { servers: options.guildCount },
+                    requiresApiToken: true,
+                }),
+            this,
+            List.Events.StatisticsPostingSuccess,
+            List.Events.StatisticsPostingFailure,
+            [options]
+        );
     }
 }

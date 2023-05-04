@@ -12,11 +12,11 @@ export class Request extends null {
      * @param init Request URL.
      * @param options Request options.
      */
-    public static async perform<T>(
+    public static async perform<D>(
         method: string,
         init: string | URL,
         options: Request.Options
-    ): Promise<T> {
+    ): Promise<D> {
         const url = new URL(String(init));
         for (const [key, value] of Object.entries(options.query ?? {}))
             url.searchParams.append(key, String(value));
@@ -37,7 +37,7 @@ export class Request extends null {
     }
 }
 
-export namespace Request {
+export namespace Request /* Options */ {
     /** Request options. */
     export interface Options {
         /** Request headers. */

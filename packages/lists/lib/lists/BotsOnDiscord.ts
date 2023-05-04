@@ -1,7 +1,8 @@
 import { List } from '~/structures/List';
+import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
-export class BotsOnDiscord extends List {
+export class BotsOnDiscord extends List implements List.WithStatisticsPosting {
     public readonly key = 'botsondiscord' as const;
     public readonly title = 'Bots on Discord' as const;
     public readonly logoUrl =
@@ -12,9 +13,16 @@ export class BotsOnDiscord extends List {
     public async postStatistics(options: List.StatisticsOptions) {
         options = Validate.statisticsOptions(options);
 
-        await this._performRequest('POST', `/bots/${this.clientId}/guilds`, {
-            body: { guildCount: options.guildCount },
-            requiresApiToken: true,
-        });
+        await Utilities.executePromiseWithEvents(
+            () =>
+                this._performRequest('POST', `/bots/${this.clientId}/guilds`, {
+                    body: { guildCount: options.guildCount },
+                    requiresApiToken: true,
+                }),
+            this,
+            List.Events.StatisticsPostingSuccess,
+            List.Events.StatisticsPostingFailure,
+            [options]
+        );
     }
 }

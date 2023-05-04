@@ -1,3 +1,8 @@
+// Errors
+export * from './errors/CombinedError';
+export * from './errors/ListsError';
+export * from './errors/RequestError';
+
 // Lists
 export * from './lists';
 

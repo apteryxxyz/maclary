@@ -39,7 +39,7 @@ const lists = [
     ...
 ];
 
-// This example uses 'discord.js' and '@discordjs/voice'
+// This example uses 'discord.js' and '@discordjs/voice', promises are supported
 const poster = new Poster(lists, {
     shardCount: () => client.shard?.count ?? 1,
     guildCount: () => client.guilds.cache.size,
@@ -105,12 +105,6 @@ poster.stopAutoPoster();
         <td>Discord Extreme List</td>
         <td><a href="https://discordextremelist.xyz">discordextremelist.xyz</a></td>
         <td>DiscordExtremeList</td>
-    </tr>
-    <tr>
-        <td><img src="https://avatars2.githubusercontent.com/u/54491479?v=4" width="32" height="32" /></td>
-        <td>Discord Labs</td>
-        <td><a href="https://bots.discordlabs.org">bots.discordlabs.org</a></td>
-        <td>DiscordLabs</td>
     </tr>
     <tr>
         <td><img src="https://avatars.githubusercontent.com/u/68995595" width="32" height="32" /></td>

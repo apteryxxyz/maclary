@@ -47,7 +47,7 @@ export class Validate extends null {
     }
 
     /**
-     * Validate that the value is valid statistics options.
+     * Validate that the value is valid bot statistics options.
      * @param options The value to validate.
      */
     public static statisticsOptions(options: unknown) {

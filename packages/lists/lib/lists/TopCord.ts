@@ -1,7 +1,11 @@
 import { List } from '~/structures/List';
+import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
-export class TopCord extends List {
+// NOTE: Supports fetching a bot, but response doesn't have enough information to construct a bot object
+// Missing username, discriminator, and avatar
+
+export class TopCord extends List implements List.WithStatisticsPosting {
     public readonly key = 'topcord' as const;
     public readonly title = 'TopCord' as const;
     public readonly logoUrl = 'https://topcord.xyz/icons/TopCord.png' as const;
@@ -11,9 +15,16 @@ export class TopCord extends List {
     public async postStatistics(options: List.StatisticsOptions) {
         options = Validate.statisticsOptions(options);
 
-        await this._performRequest('POST', `/bot/${this.clientId}/stats`, {
-            body: { guilds: options.guildCount, shards: options.shardCount },
-            requiresApiToken: true,
-        });
+        await Utilities.executePromiseWithEvents(
+            () =>
+                this._performRequest('POST', `/bot/${this.clientId}/stats`, {
+                    body: { guilds: options.guildCount, shards: options.shardCount },
+                    requiresApiToken: true,
+                }),
+            this,
+            List.Events.StatisticsPostingSuccess,
+            List.Events.StatisticsPostingFailure,
+            [options]
+        );
     }
 }

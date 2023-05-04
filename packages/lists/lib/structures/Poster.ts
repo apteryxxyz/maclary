@@ -1,17 +1,17 @@
-import { EventEmitter } from 'node:events';
+import EventEmitter from 'node:events';
 import { clearInterval, setInterval } from 'node:timers';
-import type { List } from './List';
+import { List } from './List';
+import { CombinedError } from '~/errors/CombinedError';
 import type { RequestError } from '~/errors/RequestError';
-import type { KeyOfLists } from '~/lists';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
 /**
- * The statistics poster class.
+ * Handles posting statistics to all bot lists at once, allows for auto posting.
  */
 export class Poster extends EventEmitter {
     /** The lists assigned to this poster. */
-    public readonly lists: ReadonlyMap<KeyOfLists, List>;
+    public readonly lists: ReadonlyMap<string, List & List.WithStatisticsPosting>;
     /** The options for this poster. */
     public readonly options: Poster.Options;
     /** The interval for automatically posting statistics. */
@@ -21,27 +21,31 @@ export class Poster extends EventEmitter {
      * @param lists The lists to post to.
      * @param options The poster options.
      */
-    public constructor(lists: List[], options: Poster.Options) {
+    public constructor(lists: (List & List.WithStatisticsPosting)[], options: Poster.Options) {
         super();
 
-        const listEntries = lists.map(list => [list.key, list] as [KeyOfLists, List]);
+        // Filter out lists that don't support statistics posting
+        const listsWithStatistics = lists.filter(List.hasBotStatisticsPosting);
+        const listEntries = listsWithStatistics.map(list => [list.key, list] as const);
         this.lists = Utilities.makeReadonlyMap(listEntries);
+
         this.options = Validate.posterOptions(options);
     }
 
     /**
-     * Send your client statistics to all bot lists.
+     * Send your client statistics to all postable bot lists.
      */
     public async postStatistics() {
         const options = await this._buildStatisticsOptions();
 
         const promises: Promise<void>[] = [];
-        for (const list of this.lists.values()) promises.push(list.postStatistics(options));
+        for (const list of this.lists.values()) //
+            promises.push(list.postStatistics(options));
         await Promise.all(promises);
     }
 
     /**
-     * Start automatically posting statistics to all bot lists.
+     * Start automatically posting statistics to all postable bot lists.
      * @param interval The interval in milliseconds, defaults to 30 minutes.
      */
     public startAutoPoster(interval: number = 1_800_000) {
@@ -53,16 +57,25 @@ export class Poster extends EventEmitter {
             const promises: Promise<void>[] = [];
             const errors: RequestError[] = [];
             for (const list of this.lists.values())
-                promises.push(list.postStatistics(options).catch(error => void errors.push(error)));
+                promises.push(
+                    list
+                        .postStatistics(options) //
+                        .catch(error => void errors.push(error))
+                );
             await Promise.all(promises);
 
-            if (errors.length) this.emit(Poster.Events.AutoPostFail, options, errors);
-            else this.emit(Poster.Events.AutoPostSuccess, options);
+            if (errors.length) {
+                const error = errors.length === 1 ? errors[0] : new CombinedError(errors);
+                this.emit(Poster.Event.AutoPostFailure, options, error);
+                throw error;
+            } else {
+                this.emit(Poster.Event.AutoPostSuccess, options);
+            }
         }, interval);
     }
 
     /**
-     * Stop automatically posting statistics to all bot lists.
+     * Stop automatically posting statistics to all postable bot lists.
      */
     public stopAutoPoster() {
         if (!this._autoPostInterval) return;
@@ -88,17 +101,22 @@ export class Poster extends EventEmitter {
     }
 }
 
-export namespace Poster {
-    export enum Events {
+export namespace Poster /* Events */ {
+    export enum Event {
         AutoPostSuccess = 'autoPostSuccess',
-        AutoPostFail = 'autoPostFail',
+        AutoPostFailure = 'autoPostFailure',
     }
 
     export interface EventParams {
-        [Events.AutoPostSuccess]: [options: List.StatisticsOptions];
-        [Events.AutoPostFail]: [options: List.StatisticsOptions, errors: RequestError[]];
+        [Event.AutoPostSuccess]: [options: List.StatisticsOptions];
+        [Event.AutoPostFailure]: [
+            options: List.StatisticsOptions,
+            error: RequestError | CombinedError
+        ];
     }
+}
 
+export namespace Poster /* Options */ {
     /** The poster options. */
     export interface Options {
         /** Function used to get guild count. */

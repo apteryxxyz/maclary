@@ -4,7 +4,11 @@ import { Validate } from '~/utilities/Validate';
 
 export class UniverseList
     extends List
-    implements List.WithStatisticsPosting, List.WithBotFetching, List.WithServerFetching
+    implements
+        List.WithStatisticsPosting,
+        List.WithBotFetching,
+        List.WithServerFetching,
+        List.WithHasVotedFetching
 {
     public readonly key = 'universelist' as const;
     public readonly title = 'Universe List' as const;
@@ -36,6 +40,15 @@ export class UniverseList
     public async getServer(id: string) {
         return this._performRequest<UniverseList.IncomingServer>('GET', `/servers/${id}`) //
             .then(this._constructServer);
+    }
+
+    public async hasVoted(id: string) {
+        return this._performRequest<{ vote: boolean; current: number }>(
+            'GET',
+            `/bots/${this.clientId}/voted`,
+            { query: { user: id }, requiresApiToken: true }
+        ) //
+            .then(({ vote, current }) => vote && current > Date.now() - 43_200_000);
     }
 
     private _constructBot<R extends UniverseList.IncomingBot>(raw: R) {

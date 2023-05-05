@@ -2,7 +2,10 @@ import { List } from '~/structures/List';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
-export class DiscordBotList extends List implements List.WithStatisticsPosting {
+export class DiscordBotList
+    extends List
+    implements List.WithStatisticsPosting, List.WithHasVotedFetching
+{
     public readonly key = 'discordbotlist' as const;
     public readonly title = 'Discord Bot List' as const;
     public readonly logoUrl = 'https://discordbotlist.com/android-icon-192x192.png' as const;
@@ -30,6 +33,20 @@ export class DiscordBotList extends List implements List.WithStatisticsPosting {
             List.Events.StatisticsPostingSuccess,
             List.Events.StatisticsPostingFailure,
             [options]
+        );
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ upvotes: { user_id: string; timestamp: string }[] }>(
+            'GET',
+            `/bots/${this.clientId}/upvotes`,
+            { requiresApiToken: true }
+        ).then(({ upvotes }) =>
+            upvotes.some(
+                upvote =>
+                    upvote.user_id === id &&
+                    new Date(upvote.timestamp) > new Date(Date.now() - 43_200_000)
+            )
         );
     }
 }

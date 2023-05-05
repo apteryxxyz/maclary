@@ -6,7 +6,7 @@ import { Validate } from '~/utilities/Validate';
 
 export class InfinityBotList
     extends List
-    implements List.WithStatisticsPosting, List.WithBotFetching
+    implements List.WithStatisticsPosting, List.WithBotFetching, List.WithHasVotedFetching
 {
     public readonly key = 'infinitybotlist' as const;
     public readonly title = 'Infinity Bot List' as const;
@@ -33,6 +33,16 @@ export class InfinityBotList
     public async getBot(id: string) {
         return this._performRequest<InfinityBotList.IncomingBot>('GET', `/bots/${id}`) //
             .then(this._constructBot);
+    }
+
+    public async hasVoted(id: string) {
+        return this._performRequest<{ has_voted: Boolean; last_vote_time: number }>(
+            'GET',
+            `/users/${id}/bots/${this.clientId}/votes`,
+            { requiresApiToken: true }
+        ).then(
+            ({ has_voted, last_vote_time }) => has_voted && last_vote_time > Date.now() - 43_200_000
+        );
     }
 
     private _constructBot<R extends InfinityBotList.IncomingBot>(raw: R) {

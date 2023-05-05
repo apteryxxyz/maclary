@@ -186,4 +186,12 @@ export namespace List /* Implementations */ {
          */
         getUser(id: string): Promise<User<unknown>>;
     }
+
+    export interface WithHasVotedFetching {
+        /**
+         * Check whether a user has voted for in the last 12 hours.
+         * @param id The ID of the user to check.
+         */
+        hasVoted(id: string): Promise<boolean>;
+    }
 }

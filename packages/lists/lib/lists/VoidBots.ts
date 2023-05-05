@@ -5,7 +5,10 @@ import { Validate } from '~/utilities/Validate';
 // NOTE: Supports fetching a bot, but response doesn't have enough information to construct a bot object
 // Missing username and discriminator
 
-export class VoidBots extends List implements List.WithStatisticsPosting {
+export class VoidBots
+    extends List
+    implements List.WithStatisticsPosting, List.WithHasVotedFetching
+{
     public readonly key = 'voidbots' as const;
     public readonly title = 'Void Bots' as const;
     public readonly logoUrl = 'https://voidbots.net/assets/img/logo.png' as const;
@@ -26,5 +29,13 @@ export class VoidBots extends List implements List.WithStatisticsPosting {
             List.Events.StatisticsPostingFailure,
             [options]
         );
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ voted: boolean }>(
+            'GET',
+            `/bot/voted/${this.clientId}/${id}`,
+            { requiresApiToken: true }
+        ).then(({ voted }) => voted);
     }
 }

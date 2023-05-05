@@ -24,4 +24,6 @@ export class Disforge extends List implements List.WithStatisticsPosting {
             [options]
         );
     }
+
+    // NOTE: Tried to implement hasVoted but couldn't figure out the return structure
 }

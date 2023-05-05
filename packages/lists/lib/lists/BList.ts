@@ -10,7 +10,8 @@ export class BList
         List.WithUserBotsFetching,
         List.WithServerFetching,
         List.WithUserServersFetching,
-        List.WithUserFetching
+        List.WithUserFetching,
+        List.WithHasVotedFetching
 {
     public readonly key = 'blist' as const;
     public readonly title = 'Blist' as const;
@@ -54,6 +55,14 @@ export class BList
     public getUser(id: string) {
         return this._performRequest<BList.IncomingUser>('GET', `/user/${id}`) //
             .then(this._constructUser);
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ votes: { user: string }[] }>(
+            'GET',
+            `/bot/${this.clientId}/votes`,
+            { requiresApiToken: true }
+        ).then(({ votes }) => votes.some(vote => vote.user === id));
     }
 
     private _constructBot<R extends BList.IncomingBot>(raw: R) {

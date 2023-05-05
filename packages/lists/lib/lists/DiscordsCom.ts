@@ -8,7 +8,8 @@ export class DiscordsCom
         List.WithStatisticsPosting,
         List.WithBotFetching,
         List.WithUserBotsFetching,
-        List.WithUserFetching
+        List.WithUserFetching,
+        List.WithHasVotedFetching
 {
     public readonly key = 'discordscom' as const;
     public readonly title = 'Discords.com' as const;
@@ -45,6 +46,14 @@ export class DiscordsCom
     public async getUser(id: string) {
         return this._performRequest<DiscordsCom.IncomingUser>('GET', `/user/${id}`) //
             .then(this._constructUser);
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ hasVoted24: string[] }>(
+            'GET',
+            `/bot/${this.clientId}/votes`,
+            { requiresApiToken: true }
+        ).then(({ hasVoted24 }) => hasVoted24.includes(id));
     }
 
     private _constructBot<R extends DiscordsCom.IncomingBot>(raw: R) {

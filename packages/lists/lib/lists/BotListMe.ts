@@ -2,7 +2,10 @@ import { List } from '~/structures/List';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
-export class BotListMe extends List implements List.WithStatisticsPosting {
+export class BotListMe
+    extends List
+    implements List.WithStatisticsPosting, List.WithHasVotedFetching
+{
     public readonly key = 'botlistme' as const;
     public readonly title = 'Bot List Me' as const;
     public readonly logoUrl = 'https://docs.botlist.me/icon.png' as const;
@@ -23,5 +26,12 @@ export class BotListMe extends List implements List.WithStatisticsPosting {
             List.Events.StatisticsPostingFailure,
             [options]
         );
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ hasVoted: boolean }>('GET', `bots/${this.clientId}/voted`, {
+            query: { id },
+            requiresApiToken: true,
+        }).then(({ hasVoted }) => hasVoted);
     }
 }

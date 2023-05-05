@@ -4,7 +4,7 @@ import { Validate } from '~/utilities/Validate';
 
 export class MotionBotList
     extends List
-    implements List.WithStatisticsPosting, List.WithBotFetching
+    implements List.WithStatisticsPosting, List.WithBotFetching, List.WithHasVotedFetching
 {
     public readonly key = 'motionbotlist' as const;
     public readonly title = 'Motion Botlist' as const;
@@ -36,6 +36,22 @@ export class MotionBotList
             { headers: { key: this.apiToken } }
         ) //
             .then(this._constructBot);
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ 'vote-time': string }>(
+            'GET',
+            `/bots/${this.clientId}/votes/${id}`,
+            { requiresApiToken: true }
+        )
+            .then(
+                ({ 'vote-time': voteTime }) =>
+                    new Date(voteTime).getTime() > Date.now() - 43_200_000
+            )
+            .catch(error => {
+                if (error.responseBody?.includes('user did not vote')) return false;
+                else throw error;
+            });
     }
 
     private _constructBot<R extends MotionBotList.IncomingBot>(raw: R) {

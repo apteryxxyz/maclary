@@ -4,7 +4,11 @@ import { Validate } from '~/utilities/Validate';
 
 export class TopGG
     extends List
-    implements List.WithStatisticsPosting, List.WithBotFetching, List.WithUserFetching
+    implements
+        List.WithStatisticsPosting,
+        List.WithBotFetching,
+        List.WithUserFetching,
+        List.WithHasVotedFetching
 {
     public readonly key = 'topgg' as const;
     public readonly title = 'Top.gg' as const;
@@ -36,6 +40,13 @@ export class TopGG
     public async getUser(id: string) {
         return this._performRequest<TopGG.IncomingUser>('GET', `/users/${id}`) //
             .then(this._constructUser);
+    }
+
+    public hasVoted(id: string) {
+        return this._performRequest<{ voted: boolean }>('GET', `/bots/${this.clientId}/`, {
+            query: { userId: id },
+            requiresApiToken: true,
+        }).then(({ voted }) => voted);
     }
 
     private _constructBot<R extends TopGG.IncomingBot>(raw: R) {

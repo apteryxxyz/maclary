@@ -30,12 +30,9 @@ export class MotionBotList
     }
 
     public getBot(id: string) {
-        return this._performRequest<MotionBotList.IncomingBot>(
-            'GET',
-            `/bots/${id}`, //
-            { headers: { key: this.apiToken } }
-        ) //
-            .then(this._constructBot);
+        return this._performRequest<MotionBotList.IncomingBot>('GET', `/bots/${id}`, {
+            headers: { key: this.apiToken },
+        }).then(this._constructBot);
     }
 
     public hasVoted(id: string) {

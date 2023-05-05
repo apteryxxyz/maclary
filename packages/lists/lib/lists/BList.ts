@@ -48,8 +48,7 @@ export class BList
         return this._performRequest<{ servers: BList.IncomingServer[] }>(
             'GET',
             `/user/${id}/servers`
-        ) //
-            .then(({ servers }) => servers.map(this._constructServer));
+        ).then(({ servers }) => servers.map(this._constructServer));
     }
 
     public getUser(id: string) {
@@ -57,6 +56,7 @@ export class BList
             .then(this._constructUser);
     }
 
+    // NOTE: BList only returns the 500 most recent votes
     public hasVoted(id: string) {
         return this._performRequest<{ votes: { user: string }[] }>(
             'GET',

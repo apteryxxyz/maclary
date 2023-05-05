@@ -17,6 +17,8 @@
 
 Lists is a library that helps you post your bot's statistics to all the Discord bot lists you want. It's easy to use and supports all the major bot lists. Lists is still in its early stages, many more features are planned. If you find any bugs or have any suggestions, please open an issue.
 
+> NOTE: Some lists are untested.
+
 ## 📚 Documentation
 
 <div align="center" style="padding-top: 2rem; padding-bottom: 1rem">

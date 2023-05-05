@@ -189,7 +189,7 @@ export namespace List /* Implementations */ {
 
     export interface WithHasVotedFetching {
         /**
-         * Check whether a user has voted for in the last 12 hours.
+         * Check whether a user has voted for the client in the last 12 hours.
          * @param id The ID of the user to check.
          */
         hasVoted(id: string): Promise<boolean>;

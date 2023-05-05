@@ -47,8 +47,7 @@ export class UniverseList
             'GET',
             `/bots/${this.clientId}/voted`,
             { query: { user: id }, requiresApiToken: true }
-        ) //
-            .then(({ vote, current }) => vote && current > Date.now() - 43_200_000);
+        ).then(({ vote, current }) => vote && current > Date.now() - 43_200_000);
     }
 
     private _constructBot<R extends UniverseList.IncomingBot>(raw: R) {

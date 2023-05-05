@@ -35,12 +35,9 @@ export class DiscordBots
     }
 
     public getUserBots(id: string) {
-        return this._performRequest<{ bots: DiscordBots.IncomingBot[] }>(
-            'GET',
-            `/bots`, //
-            { query: { authorID: id, limit: 100 } }
-        ) //
-            .then(({ bots }) => bots.map(this._constructBot));
+        return this._performRequest<{ bots: DiscordBots.IncomingBot[] }>('GET', `/bots`, {
+            query: { authorID: id, limit: 100 },
+        }).then(({ bots }) => bots.map(this._constructBot));
     }
 
     private _constructBot<R extends DiscordBots.IncomingBot>(raw: R) {

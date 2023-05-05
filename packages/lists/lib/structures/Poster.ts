@@ -67,7 +67,6 @@ export class Poster extends EventEmitter {
             if (errors.length) {
                 const error = errors.length === 1 ? errors[0] : new CombinedError(errors);
                 this.emit(Poster.Event.AutoPostFailure, options, error);
-                throw error;
             } else {
                 this.emit(Poster.Event.AutoPostSuccess, options);
             }

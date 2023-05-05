@@ -18,7 +18,7 @@ export class DiscordList extends List implements List.WithStatisticsPosting {
 
         await Utilities.executePromiseWithEvents(
             () =>
-                this._performRequest('PUT', `/bot/${this.clientId}/guilds`, {
+                this._performRequest('PUT', `/bots/${this.clientId}/guilds`, {
                     body: { count: options.guildCount },
                     requiresApiToken: true,
                 }),

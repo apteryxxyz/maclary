@@ -43,11 +43,11 @@ export class UniverseList
     }
 
     public async hasVoted(id: string) {
-        return this._performRequest<{ vote: boolean; current: number }>(
+        return this._performRequest<{ voted: boolean; current: number }>(
             'GET',
             `/bots/${this.clientId}/voted`,
             { query: { user: id }, requiresApiToken: true }
-        ).then(({ vote, current }) => vote && current > Date.now() - 43_200_000);
+        ).then(({ voted, current }) => voted && current > Date.now() - 43_200_000);
     }
 
     private _constructBot<R extends UniverseList.IncomingBot>(raw: R) {

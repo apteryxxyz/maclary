@@ -6,7 +6,11 @@ import { Validate } from '~/utilities/Validate';
 
 export class InfinityBotList
     extends List
-    implements List.WithStatisticsPosting, List.WithBotFetching, List.WithHasVotedFetching
+    implements
+        List.WithStatisticsPosting,
+        List.WithBotFetching,
+        List.WithHasVotedFetching,
+        List.WithWebhookVoteReceiving
 {
     public readonly key = 'infinitybotlist' as const;
     public readonly title = 'Infinity Bot List' as const;
@@ -62,6 +66,16 @@ export class InfinityBotList
             longDescription: raw.long,
             raw,
         } satisfies List.Bot<R>;
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends InfinityBotList.IncomingWebhookVote>(
+        raw: R
+    ) {
+        return {
+            type: raw.type === 'VOTE' ? 'vote' : 'test',
+            userId: raw.userID,
+            raw,
+        } satisfies List.WebhookVote<R>;
     }
 }
 
@@ -222,5 +236,20 @@ export namespace InfinityBotList {
         in_guild: string;
         /** The users nickname if in a mutual server */
         nickname: string;
+    }
+
+    export interface IncomingWebhookVote {
+        /** The Discord ID (Snowflake) for the Bot who Recieved a Vote. */
+        botID: string;
+        /** The Discord ID (Snowflake) of the User who Voted. */
+        userID: string;
+        /** The Username of the User who Voted. */
+        userName: string;
+        /** The Bots new Vote Count. */
+        count: number;
+        /** The Date and Time of the Vote. */
+        timestamp: string;
+        /** The TYPE of Request (Should always be "VOTE" or "TEST" for test Requests). */
+        type: 'VOTE' | 'TEST';
     }
 }

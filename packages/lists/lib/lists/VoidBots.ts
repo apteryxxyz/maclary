@@ -7,7 +7,7 @@ import { Validate } from '~/utilities/Validate';
 
 export class VoidBots
     extends List
-    implements List.WithStatisticsPosting, List.WithHasVotedFetching
+    implements List.WithStatisticsPosting, List.WithHasVotedFetching, List.WithWebhookVoteReceiving
 {
     public readonly key = 'voidbots' as const;
     public readonly title = 'Void Bots' as const;
@@ -37,5 +37,24 @@ export class VoidBots
             `/bot/voted/${this.clientId}/${id}`,
             { requiresApiToken: true }
         ).then(({ voted }) => voted);
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends VoidBots.IncomingWebhookVote>(raw: R) {
+        return {
+            type: raw.type,
+            userId: raw.user,
+            raw,
+        } satisfies List.WebhookVote<R>;
+    }
+}
+
+export namespace VoidBots {
+    export interface IncomingWebhookVote {
+        /** ID of the bot that recieved the vote. */
+        bot: string;
+        /** ID of the user who voted. */
+        user: string;
+        /** Type of the vote (should be "vote" except when using the test button, it's "test") */
+        type: 'vote' | 'test';
     }
 }

@@ -4,7 +4,7 @@ import { Validate } from '~/utilities/Validate';
 
 export class BotListMe
     extends List
-    implements List.WithStatisticsPosting, List.WithHasVotedFetching
+    implements List.WithStatisticsPosting, List.WithHasVotedFetching, List.WithWebhookVoteReceiving
 {
     public readonly key = 'botlistme' as const;
     public readonly title = 'Bot List Me' as const;
@@ -33,5 +33,21 @@ export class BotListMe
             query: { id },
             requiresApiToken: true,
         }).then(({ hasVoted }) => hasVoted);
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends BotListMe.IncomingWebhookVote>(raw: R) {
+        return {
+            type: raw.type === 'Upvote' ? 'vote' : 'test',
+            userId: raw.user,
+            raw,
+        } satisfies List.WebhookVote<R>;
+    }
+}
+
+export namespace BotListMe {
+    export interface IncomingWebhookVote {
+        bot: string;
+        user: string;
+        type: 'Upvote' | 'Test';
     }
 }

@@ -2,6 +2,8 @@ import { List } from '~/structures/List';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
+// NOTE: Supports webhooks, but has a weird way of handling authorisation
+
 export class DiscordList extends List implements List.WithStatisticsPosting {
     public readonly key = 'discordlist' as const;
     public readonly title = 'Discordlist' as const;

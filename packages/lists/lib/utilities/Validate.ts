@@ -2,6 +2,7 @@ import { Utilities } from './Utilities';
 import { RangeError, TypeError } from '~/errors/ListsError';
 import type { List } from '~/structures/List';
 import type { Poster } from '~/structures/Poster';
+import type { Webhook } from '~/structures/Webhook';
 
 export class Validate extends null {
     /**
@@ -9,11 +10,17 @@ export class Validate extends null {
      * @param name The name.
      * @param value The value to validate.
      */
-    public static integer(name: string, value: unknown) {
+    public static integer(name: string, value: unknown, required: true): number;
+    public static integer(name: string, value: unknown, required: false): number | undefined;
+    public static integer(name: string, value: unknown, required: boolean) {
         const integer = Number.parseInt(String(value), 10);
-        if (Number.isNaN(integer)) throw new TypeError('InvalidType', name, 'number');
-        if (integer < 0) throw new RangeError('MustBePositive', name, integer);
-        return integer;
+
+        if (Number.isNaN(integer)) {
+            if (!required) return undefined;
+            throw new TypeError('InvalidType', name, 'number');
+        } else if (integer < 0) {
+            throw new RangeError('MustBePositive', name, integer);
+        } else return integer;
     }
 
     /**
@@ -21,9 +28,15 @@ export class Validate extends null {
      * @param name The name.
      * @param value The value to validate.
      */
-    public static function(name: string, value: unknown) {
-        if (typeof value !== 'function') throw new TypeError('InvalidType', name, 'function');
-        return value as (...args: unknown[]) => unknown;
+    public static function(name: string, value: unknown, required: false): Function;
+    public static function(name: string, value: unknown, required: true): Function | undefined;
+    public static function(name: string, value: unknown, required: boolean) {
+        if (typeof value === 'function') {
+            return value;
+        } else {
+            if (!required) return undefined;
+            throw new TypeError('InvalidType', name, 'function');
+        }
     }
 
     /**
@@ -36,14 +49,30 @@ export class Validate extends null {
         const typedOptions = options as Record<string, unknown>;
 
         return Utilities.deleteUndefinedProperties({
-            guildCount: this.function('guildCount', typedOptions['guildCount']),
-            userCount: this.function('userCount', typedOptions['userCount']),
-            shardCount: this.function('shardCount', typedOptions['shardCount']),
+            guildCount: this.function('guildCount', typedOptions['guildCount'], true),
+            userCount: this.function('userCount', typedOptions['userCount'], true),
+            shardCount: this.function('shardCount', typedOptions['shardCount'], true),
             voiceConnectionCount: this.function(
                 'voiceConnectionCount',
-                typedOptions['voiceConnectionCount']
+                typedOptions['voiceConnectionCount'],
+                true
             ),
         }) as Poster.Options;
+    }
+
+    public static webhookOptions(options: unknown) {
+        if (typeof options !== 'object' || options === null)
+            throw new TypeError('InvalidType', 'options', 'record');
+        const typedOptions = options as Record<string, unknown>;
+
+        return Utilities.deleteUndefinedProperties({
+            port: this.integer('port', typedOptions['port'], true),
+            handleAfterVote: this.function(
+                'handleAfterVote',
+                typedOptions['handleAfterVote'],
+                false
+            ),
+        }) as Webhook.Options;
     }
 
     /**
@@ -56,12 +85,13 @@ export class Validate extends null {
         const typedOptions = options as Record<string, unknown>;
 
         return Utilities.deleteUndefinedProperties({
-            guildCount: this.integer('guildCount', typedOptions['guildCount']),
-            userCount: this.integer('userCount', typedOptions['userCount']),
-            shardCount: this.integer('shardCount', typedOptions['shardCount']),
+            guildCount: this.integer('guildCount', typedOptions['guildCount'], true),
+            userCount: this.integer('userCount', typedOptions['userCount'], true),
+            shardCount: this.integer('shardCount', typedOptions['shardCount'], true),
             voiceConnectionCount: this.integer(
                 'voiceConnectionCount',
-                typedOptions['voiceConnectionCount']
+                typedOptions['voiceConnectionCount'],
+                true
             ),
         }) as List.StatisticsOptions;
     }

@@ -2,7 +2,10 @@ import { List } from '~/structures/List';
 import { Utilities } from '~/utilities/Utilities';
 import { Validate } from '~/utilities/Validate';
 
-export class DiscordBotListEU extends List implements List.WithStatisticsPosting {
+export class DiscordBotListEU
+    extends List
+    implements List.WithStatisticsPosting, List.WithWebhookVoteReceiving
+{
     public readonly key = 'discordbotlisteu' as const;
     public readonly title = 'discord-botlist.eu' as const;
     public readonly logoUrl = 'https://cdn.discord-botlist.eu/pictures/logo.png' as const;
@@ -27,5 +30,29 @@ export class DiscordBotListEU extends List implements List.WithStatisticsPosting
             List.Events.StatisticsPostingFailure,
             [options]
         );
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends DiscordBotListEU.IncomingWebhookVote>(
+        raw: R
+    ) {
+        return {
+            type: 'vote',
+            userId: raw.user.id,
+            raw,
+        } satisfies List.WebhookVote<R>;
+    }
+}
+
+export namespace DiscordBotListEU {
+    export interface IncomingWebhookVote {
+        user: {
+            id: string;
+            username: string;
+            discriminator: string;
+        };
+        bot: {
+            id: string;
+            votes: string[];
+        };
     }
 }

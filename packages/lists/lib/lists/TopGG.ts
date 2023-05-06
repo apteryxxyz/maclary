@@ -8,7 +8,8 @@ export class TopGG
         List.WithStatisticsPosting,
         List.WithBotFetching,
         List.WithUserFetching,
-        List.WithHasVotedFetching
+        List.WithHasVotedFetching,
+        List.WithWebhookVoteReceiving
 {
     public readonly key = 'topgg' as const;
     public readonly title = 'Top.gg' as const;
@@ -77,6 +78,14 @@ export class TopGG
             }`,
             raw,
         } satisfies List.User<R>;
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends TopGG.IncomingWebhookVote>(raw: R) {
+        return {
+            type: raw.type === 'upvote' ? 'vote' : 'test',
+            userId: raw.user,
+            raw,
+        } satisfies List.WebhookVote<R>;
     }
 }
 
@@ -172,5 +181,24 @@ export namespace TopGG {
         webMod: boolean;
         /** The admin status of the user. */
         admin: boolean;
+    }
+
+    export interface IncomingWebhookVote {
+        /** If webhook is a bot: ID of the bot that received a vote. */
+        bot?: string;
+        /** If webhook is a server: ID of the server that received a vote. */
+        guild?: string;
+        /** ID of the user who voted. */
+        user: string;
+        /** The type of the vote (should always be "upvote" except when using the test button it's "test"). */
+        type: string;
+        /** Whether the weekend multiplier is in effect, meaning users votes count as two. */
+        isWeekend?: boolean;
+        /** Query parameters in vote page in a key to value object. */
+        query:
+            | {
+                  [key: string]: string;
+              }
+            | string;
     }
 }

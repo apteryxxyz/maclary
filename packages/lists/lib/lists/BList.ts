@@ -11,7 +11,8 @@ export class BList
         List.WithServerFetching,
         List.WithUserServersFetching,
         List.WithUserFetching,
-        List.WithHasVotedFetching
+        List.WithHasVotedFetching,
+        List.WithWebhookVoteReceiving
 {
     public readonly key = 'blist' as const;
     public readonly title = 'Blist' as const;
@@ -102,6 +103,14 @@ export class BList
             avatarUrl: raw.avatar_url,
             raw,
         } satisfies List.User<R>;
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends BList.IncomingWebhookVote>(raw: R) {
+        return {
+            type: 'vote',
+            userId: raw.user,
+            raw,
+        } satisfies List.WebhookVote<R>;
     }
 }
 
@@ -253,5 +262,12 @@ export namespace BList {
         vanity_url: string;
         /** The last time the user had to use Discord OAuth to login */
         last_login: string;
+    }
+
+    export interface IncomingWebhookVote {
+        /** The ID of the user who voted. */
+        user: string;
+        /** The time and date the user voted. */
+        time: string;
     }
 }

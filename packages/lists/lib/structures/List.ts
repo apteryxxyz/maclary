@@ -22,16 +22,19 @@ export abstract class List extends EventEmitter {
     public readonly clientId: string;
     /** API token for this list that belongs to the client. */
     public readonly apiToken: string;
+    /** Webhook token for this list that belongs to the client. */
+    public readonly webhookToken?: string;
 
     /**
      * @param clientId The ID of the bot.
      * @param apiToken The API token for this list.
      */
-    public constructor(clientId: string, apiToken: string) {
+    public constructor(clientId: string, apiToken: string, webhookToken?: string) {
         super();
 
         this.clientId = clientId;
         this.apiToken = apiToken;
+        this.webhookToken = webhookToken;
     }
 
     /**
@@ -67,11 +70,14 @@ export namespace List /* Events */ {
     export enum Events {
         StatisticsPostingSuccess = 'statisticsPostingSuccess',
         StatisticsPostingFailure = 'statisticsPostingFailure',
+
+        NewVote = 'newVote',
     }
 
     export interface EventParams {
         [Events.StatisticsPostingSuccess]: [StatisticsOptions];
         [Events.StatisticsPostingFailure]: [StatisticsOptions, RequestError];
+        [Events.NewVote]: [WebhookVote<unknown>];
     }
 }
 
@@ -126,6 +132,12 @@ export namespace List /* Data */ {
         avatarUrl: string;
         raw: R;
     }
+
+    export interface WebhookVote<R> {
+        type: 'vote' | 'test';
+        userId: string;
+        raw: R;
+    }
 }
 
 export namespace List /* Implementations */ {
@@ -145,6 +157,16 @@ export namespace List /* Implementations */ {
         list: L
     ): list is L & WithStatisticsPosting {
         return 'postStatistics' in list && typeof list.postStatistics === 'function';
+    }
+
+    export interface WithWebhookVoteReceiving {
+        /** @internal */ _constructWebhookVote(raw: unknown): WebhookVote<unknown>;
+    }
+
+    export function hasVoteReceiving<L extends List>(
+        list: L
+    ): list is L & WithWebhookVoteReceiving {
+        return '_constructWebhookVote' in list && typeof list._constructWebhookVote === 'function';
     }
 
     export interface WithBotFetching {

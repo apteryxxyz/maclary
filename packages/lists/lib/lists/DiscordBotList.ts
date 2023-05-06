@@ -4,7 +4,7 @@ import { Validate } from '~/utilities/Validate';
 
 export class DiscordBotList
     extends List
-    implements List.WithStatisticsPosting, List.WithHasVotedFetching
+    implements List.WithStatisticsPosting, List.WithHasVotedFetching, List.WithWebhookVoteReceiving
 {
     public readonly key = 'discordbotlist' as const;
     public readonly title = 'Discord Bot List' as const;
@@ -36,6 +36,7 @@ export class DiscordBotList
         );
     }
 
+    // NOTE: Only returns the most recent 500 votes
     public hasVoted(id: string) {
         return this._performRequest<{ upvotes: { user_id: string; timestamp: string }[] }>(
             'GET',
@@ -48,5 +49,28 @@ export class DiscordBotList
                     new Date(upvote.timestamp) > new Date(Date.now() - 43_200_000)
             )
         );
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends DiscordBotList.IncomingWebhookVote>(
+        raw: R
+    ) {
+        return {
+            type: 'vote',
+            userId: raw.id,
+            raw,
+        } satisfies List.WebhookVote<R>;
+    }
+}
+
+export namespace DiscordBotList {
+    export interface IncomingWebhookVote {
+        /** If the user is a site administrator. */
+        admin: boolean;
+        /** The avatar hash of the user. */
+        avatar: string;
+        /** The username of the user who voted. */
+        username: string;
+        /** The ID of the user who voted. */
+        id: string;
     }
 }

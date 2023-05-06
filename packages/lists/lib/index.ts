@@ -9,6 +9,7 @@ export * from './lists';
 // Structures
 export * from './structures/List';
 export * from './structures/Poster';
+export * from './structures/Webhook';
 
 // Utilities
 export * from './utilities/Request';

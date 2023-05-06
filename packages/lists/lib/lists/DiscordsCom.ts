@@ -9,7 +9,8 @@ export class DiscordsCom
         List.WithBotFetching,
         List.WithUserBotsFetching,
         List.WithUserFetching,
-        List.WithHasVotedFetching
+        List.WithHasVotedFetching,
+        List.WithWebhookVoteReceiving
 {
     public readonly key = 'discordscom' as const;
     public readonly title = 'Discords.com' as const;
@@ -48,6 +49,7 @@ export class DiscordsCom
             .then(this._constructUser);
     }
 
+    // TODO: Our docs say this is every 12 hours, for this list its 24 hours
     public hasVoted(id: string) {
         return this._performRequest<{ hasVoted24: string[] }>(
             'GET',
@@ -79,6 +81,16 @@ export class DiscordsCom
             avatarUrl: raw.avatar,
             raw,
         } satisfies List.User<R>;
+    }
+
+    /** @internal */ public _constructWebhookVote<R extends DiscordsCom.IncomingWebhookVote>(
+        raw: R
+    ) {
+        return {
+            type: 'vote',
+            userId: raw.user,
+            raw,
+        } satisfies List.WebhookVote<R>;
     }
 }
 
@@ -183,5 +195,22 @@ export namespace DiscordsCom {
         username: string;
         /** The user's website. */
         website: string;
+    }
+
+    export interface IncomingWebhookVote {
+        /** The ID of the user who voted. */
+        user: string;
+        /** The ID of the bot that was voted for. */
+        bot: string;
+        votes: {
+            /** Total number of votes this bot has. */
+            totalVotes: number;
+            /** Total number of votes this bot has received in the last month. */
+            votesMonth: number;
+            /** Total number of votes this bot has received in the last 24 hours. */
+            votes24: number;
+            /** List of user IDs that have voted for this bot. */
+            hasVoted: string[];
+        };
     }
 }

@@ -43,9 +43,7 @@ export class Webhook extends EventEmitter {
             });
         }
 
-        this.server.listen(this.options.port, () => {
-            console.log('Online');
-        });
+        this.server.listen(this.options.port, () => this.emit(Webhook.Events.Ready));
     }
 }
 
@@ -58,10 +56,12 @@ export namespace Webhook /* Data */ {
 
 export namespace Webhook /* Events */ {
     export enum Events {
+        Ready = 'ready',
         NewVote = 'newVote',
     }
 
     export interface EventParams {
+        [Events.Ready]: [];
         [Events.NewVote]: [List, List.WebhookVote<unknown>];
     }
 }

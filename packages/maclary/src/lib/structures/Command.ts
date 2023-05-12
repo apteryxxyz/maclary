@@ -414,7 +414,12 @@ export namespace Command {
     export type GroupOptions = Partial<
         Pick<
             Options<any, any>,
-            'description' | 'descriptionLocalizations' | 'name' | 'nameLocalizations'
+            | 'description'
+            | 'descriptionLocalizations'
+            | 'name'
+            | 'nameLocalizations'
+            | 'dmPermission'
+            | 'defaultMemberPermissions'
         >
     >;
     export type CategoryOptions = Partial<

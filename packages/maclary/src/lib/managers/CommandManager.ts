@@ -190,7 +190,6 @@ export class CommandManager extends SetManager<Command<any, any>> {
 
         const command = new (class extends Command<Command.Type.ChatInput, any> {
             public override _isBase = cache;
-
             public override _variety = Command.Variety.Group;
 
             public constructor() {
@@ -203,6 +202,8 @@ export class CommandManager extends SetManager<Command<any, any>> {
                     descriptionLocalizations: groupOptions.descriptionLocalizations,
                     category: categoryOptions.category,
                     categoryLocalizations: categoryOptions.categoryLocalizations,
+                    defaultMemberPermissions: groupOptions.defaultMemberPermissions,
+                    dmPermission: groupOptions.dmPermission,
                 });
             }
         })();
